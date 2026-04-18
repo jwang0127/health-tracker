@@ -106,18 +106,33 @@
             font-size: 18px;
         }
         
-        .input-row {
+        .input-group {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 15px;
         }
         
-        .bp-row {
-            grid-template-columns: repeat(2, 1fr);
+        .meal-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .meal-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+            display: block;
         }
         
         .bp-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .bp-section {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
@@ -333,11 +348,11 @@
                 flex-direction: column;
             }
             
-            .input-row {
+            .input-group {
                 grid-template-columns: 1fr;
             }
             
-            .bp-row {
+            .bp-group {
                 grid-template-columns: 1fr;
             }
             
@@ -376,95 +391,105 @@
                         <span>🩸 血糖 (mmol/L)</span>
                     </div>
                     
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>空腹</label>
-                            <input type="number" id="fastingGlucose" step="0.1" min="2" max="30" placeholder="5.6">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>早餐后2h</label>
-                            <input type="number" id="breakfast2h" step="0.1" min="2" max="30" placeholder="7.8">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>早餐后3-4h 选填</label>
-                            <input type="number" id="breakfast3h" step="0.1" min="2" max="30" placeholder="6.5">
+                    <!-- 空腹血糖 -->
+                    <div class="meal-group">
+                        <div class="meal-label">空腹</div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <input type="number" id="fastingGlucose" step="0.1" min="2" max="30" placeholder="5.6">
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>午餐后2h</label>
-                            <input type="number" id="lunch2h" step="0.1" min="2" max="30" placeholder="7.8">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>午餐后3-4h 选填</label>
-                            <input type="number" id="lunch3h" step="0.1" min="2" max="30" placeholder="6.5">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>晚餐后2h</label>
-                            <input type="number" id="dinner2h" step="0.1" min="2" max="30" placeholder="7.8">
+                    <!-- 早餐后 -->
+                    <div class="meal-group">
+                        <div class="meal-label">🌅 早餐后</div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label>餐后2h</label>
+                                <input type="number" id="breakfast2h" step="0.1" min="2" max="30" placeholder="7.8">
+                            </div>
+                            <div class="form-group">
+                                <label>餐后3-4h 选填</label>
+                                <input type="number" id="breakfast3h" step="0.1" min="2" max="30" placeholder="6.5">
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>晚餐后3-4h 选填</label>
-                            <input type="number" id="dinner3h" step="0.1" min="2" max="30" placeholder="6.5">
+                    <!-- 午餐后 -->
+                    <div class="meal-group">
+                        <div class="meal-label">🌞 午餐后</div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label>餐后2h</label>
+                                <input type="number" id="lunch2h" step="0.1" min="2" max="30" placeholder="7.8">
+                            </div>
+                            <div class="form-group">
+                                <label>餐后3-4h 选填</label>
+                                <input type="number" id="lunch3h" step="0.1" min="2" max="30" placeholder="6.5">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 晚餐后 -->
+                    <div class="meal-group">
+                        <div class="meal-label">🌙 晚餐后</div>
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label>餐后2h</label>
+                                <input type="number" id="dinner2h" step="0.1" min="2" max="30" placeholder="7.8">
+                            </div>
+                            <div class="form-group">
+                                <label>餐后3-4h 选填</label>
+                                <input type="number" id="dinner3h" step="0.1" min="2" max="30" placeholder="6.5">
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 血压数据 - 早晚分开 -->
+                <!-- 血压数据 - 早晚分开，包含心率 -->
                 <div class="input-section">
                     <div class="section-title">
-                        <span>💓 血压 (mmHg)</span>
+                        <span>💓 血压与心率</span>
                     </div>
                     
-                    <div class="bp-row">
+                    <div class="bp-group">
                         <!-- 早晨血压 -->
-                        <div class="bp-group">
-                            <div class="bp-label">🌅 早晨血压</div>
-                            <div class="input-row">
+                        <div class="bp-section">
+                            <div class="bp-label">🌅 早晨</div>
+                            <div class="input-group">
                                 <div class="form-group">
-                                    <label>收缩压 (高压)</label>
+                                    <label>收缩压</label>
                                     <input type="number" id="morningSystolic" min="50" max="250" placeholder="120">
                                 </div>
                                 <div class="form-group">
-                                    <label>舒张压 (低压)</label>
+                                    <label>舒张压</label>
                                     <input type="number" id="morningDiastolic" min="30" max="150" placeholder="80">
+                                </div>
+                                <div class="form-group">
+                                    <label>心率</label>
+                                    <input type="number" id="morningHeartRate" min="40" max="200" placeholder="72">
                                 </div>
                             </div>
                         </div>
                         
                         <!-- 晚间血压 -->
-                        <div class="bp-group">
-                            <div class="bp-label">🌙 晚间血压</div>
-                            <div class="input-row">
+                        <div class="bp-section">
+                            <div class="bp-label">🌙 晚间</div>
+                            <div class="input-group">
                                 <div class="form-group">
-                                    <label>收缩压 (高压)</label>
+                                    <label>收缩压</label>
                                     <input type="number" id="eveningSystolic" min="50" max="250" placeholder="120">
                                 </div>
                                 <div class="form-group">
-                                    <label>舒张压 (低压)</label>
+                                    <label>舒张压</label>
                                     <input type="number" id="eveningDiastolic" min="30" max="150" placeholder="80">
                                 </div>
+                                <div class="form-group">
+                                    <label>心率</label>
+                                    <input type="number" id="eveningHeartRate" min="40" max="200" placeholder="72">
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 心率 -->
-                <div class="input-section">
-                    <div class="section-title">
-                        <span>❤️ 心率 (次/分钟)</span>
-                    </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <input type="number" id="heartRate" min="40" max="200" placeholder="72">
                         </div>
                     </div>
                 </div>
@@ -549,7 +574,8 @@
                                 <th>晚2h</th>
                                 <th>晨压</th>
                                 <th>晚压</th>
-                                <th>心率</th>
+                                <th>晨心</th>
+                                <th>晚心</th>
                                 <th>心情</th>
                                 <th>操作</th>
                             </tr>
@@ -622,13 +648,13 @@
                 lunch3h: parseFloat(document.getElementById('lunch3h').value) || null,
                 dinner2h: parseFloat(document.getElementById('dinner2h').value) || null,
                 dinner3h: parseFloat(document.getElementById('dinner3h').value) || null,
-                // 血压数据
+                // 血压心率数据
                 morningSystolic: parseInt(document.getElementById('morningSystolic').value) || null,
                 morningDiastolic: parseInt(document.getElementById('morningDiastolic').value) || null,
+                morningHeartRate: parseInt(document.getElementById('morningHeartRate').value) || null,
                 eveningSystolic: parseInt(document.getElementById('eveningSystolic').value) || null,
                 eveningDiastolic: parseInt(document.getElementById('eveningDiastolic').value) || null,
-                // 心率
-                heartRate: parseInt(document.getElementById('heartRate').value) || null,
+                eveningHeartRate: parseInt(document.getElementById('eveningHeartRate').value) || null,
                 // 心情备注
                 mood: currentMood,
                 note: document.getElementById('note').value.trim()
@@ -715,20 +741,24 @@
                     <div class="stat-label">总记录数</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">${stats.avgGlucose.total}</div>
-                    <div class="stat-label">平均血糖</div>
-                    <div class="sub-stats">空${stats.avgGlucose.fasting} 早${stats.avgGlucose.breakfast}</div>
-                    <div class="sub-stats">午${stats.avgGlucose.lunch} 晚${stats.avgGlucose.dinner}</div>
+                    <div class="stat-value">${stats.avgGlucose.fasting}</div>
+                    <div class="stat-label">平均空腹血糖</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.avgGlucose.breakfast}</div>
+                    <div class="stat-label">平均早餐2h</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.avgGlucose.lunch}</div>
+                    <div class="stat-label">平均午餐2h</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.avgGlucose.dinner}</div>
+                    <div class="stat-label">平均晚餐2h</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${stats.avgBP.systolic}/${stats.avgBP.diastolic}</div>
                     <div class="stat-label">平均血压</div>
-                    <div class="sub-stats">晨${stats.avgBP.morning}</div>
-                    <div class="sub-stats">晚${stats.avgBP.evening}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${stats.avgHR}</div>
-                    <div class="stat-label">平均心率</div>
                 </div>
             `;
             
@@ -743,44 +773,43 @@
             const lunch2hValues = data.map(d => d.lunch2h).filter(v => v !== null);
             const dinner2hValues = data.map(d => d.dinner2h).filter(v => v !== null);
             
-            // 所有血糖值
-            const allGlucoseValues = [...fastingValues, ...breakfast2hValues, ...lunch2hValues, ...dinner2hValues];
-            
             // 计算平均值
             const avgGlucose = {
-                total: allGlucoseValues.length ? (allGlucoseValues.reduce((a, b) => a + b) / allGlucoseValues.length).toFixed(1) : '-',
-                fasting: fastingValues.length ? (fastingValues.reduce((a, b) => a + b) / fastingValues.length).toFixed(1) : '-',
-                breakfast: breakfast2hValues.length ? (breakfast2hValues.reduce((a, b) => a + b) / breakfast2hValues.length).toFixed(1) : '-',
-                lunch: lunch2hValues.length ? (lunch2hValues.reduce((a, b) => a + b) / lunch2hValues.length).toFixed(1) : '-',
-                dinner: dinner2hValues.length ? (dinner2hValues.reduce((a, b) => a + b) / dinner2hValues.length).toFixed(1) : '-'
+                fasting: fastingValues.length ? fastingValues.reduce((a, b) => a + b) / fastingValues.length : 0,
+                breakfast: breakfast2hValues.length ? breakfast2hValues.reduce((a, b) => a + b) / breakfast2hValues.length : 0,
+                lunch: lunch2hValues.length ? lunch2hValues.reduce((a, b) => a + b) / lunch2hValues.length : 0,
+                dinner: dinner2hValues.length ? dinner2hValues.reduce((a, b) => a + b) / dinner2hValues.length : 0
             };
             
-            // 血压数据
-            const morningSystolicValues = data.map(d => d.morningSystolic).filter(v => v !== null);
-            const morningDiastolicValues = data.map(d => d.morningDiastolic).filter(v => v !== null);
-            const eveningSystolicValues = data.map(d => d.eveningSystolic).filter(v => v !== null);
-            const eveningDiastolicValues = data.map(d => d.eveningDiastolic).filter(v => v !== null);
+            // 血压数据 - 合并早晚数据
+            const allSystolicValues = [
+                ...data.map(d => d.morningSystolic).filter(v => v !== null),
+                ...data.map(d => d.eveningSystolic).filter(v => v !== null)
+            ];
+            
+            const allDiastolicValues = [
+                ...data.map(d => d.morningDiastolic).filter(v => v !== null),
+                ...data.map(d => d.eveningDiastolic).filter(v => v !== null)
+            ];
             
             const avgBP = {
-                systolic: morningSystolicValues.concat(eveningSystolicValues).length 
-                    ? Math.round(morningSystolicValues.concat(eveningSystolicValues).reduce((a, b) => a + b) / (morningSystolicValues.length + eveningSystolicValues.length))
-                    : '-',
-                diastolic: morningDiastolicValues.concat(eveningDiastolicValues).length
-                    ? Math.round(morningDiastolicValues.concat(eveningDiastolicValues).reduce((a, b) => a + b) / (morningDiastolicValues.length + eveningDiastolicValues.length))
-                    : '-',
-                morning: morningSystolicValues.length && morningDiastolicValues.length
-                    ? `${Math.round(morningSystolicValues.reduce((a, b) => a + b) / morningSystolicValues.length)}/${Math.round(morningDiastolicValues.reduce((a, b) => a + b) / morningDiastolicValues.length)}`
-                    : '-',
-                evening: eveningSystolicValues.length && eveningDiastolicValues.length
-                    ? `${Math.round(eveningSystolicValues.reduce((a, b) => a + b) / eveningSystolicValues.length)}/${Math.round(eveningDiastolicValues.reduce((a, b) => a + b) / eveningDiastolicValues.length)}`
-                    : '-'
+                systolic: allSystolicValues.length ? Math.round(allSystolicValues.reduce((a, b) => a + b) / allSystolicValues.length) : 0,
+                diastolic: allDiastolicValues.length ? Math.round(allDiastolicValues.reduce((a, b) => a + b) / allDiastolicValues.length) : 0
             };
             
-            // 心率数据
-            const hrValues = data.map(d => d.heartRate).filter(v => v !== null);
-            const avgHR = hrValues.length ? Math.round(hrValues.reduce((a, b) => a + b) / hrValues.length) : '-';
-            
-            return { avgGlucose, avgBP, avgHR };
+            // 格式化显示
+            return {
+                avgGlucose: {
+                    fasting: avgGlucose.fasting ? avgGlucose.fasting.toFixed(1) : '-',
+                    breakfast: avgGlucose.breakfast ? avgGlucose.breakfast.toFixed(1) : '-',
+                    lunch: avgGlucose.lunch ? avgGlucose.lunch.toFixed(1) : '-',
+                    dinner: avgGlucose.dinner ? avgGlucose.dinner.toFixed(1) : '-'
+                },
+                avgBP: {
+                    systolic: avgBP.systolic || '-',
+                    diastolic: avgBP.diastolic || '-'
+                }
+            };
         }
         
         // 获取心情表情
@@ -836,7 +865,7 @@
             const tbody = document.getElementById('historyBody');
             
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录，请添加第一条数据</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录，请添加第一条数据</td></tr>';
                 return;
             }
             
@@ -850,7 +879,8 @@
                 
                 const morningBPClass = checkBPAbnormal(record.morningSystolic, record.morningDiastolic);
                 const eveningBPClass = checkBPAbnormal(record.eveningSystolic, record.eveningDiastolic);
-                const hrClass = checkHRAbnormal(record.heartRate);
+                const morningHRClass = checkHRAbnormal(record.morningHeartRate);
+                const eveningHRClass = checkHRAbnormal(record.eveningHeartRate);
                 
                 html += `
                     <tr>
@@ -861,7 +891,8 @@
                         <td class="${dinner2hClass}">${record.dinner2h || '-'}</td>
                         <td class="${morningBPClass}">${record.morningSystolic ? record.morningSystolic + '/' + record.morningDiastolic : '-'}</td>
                         <td class="${eveningBPClass}">${record.eveningSystolic ? record.eveningSystolic + '/' + record.eveningDiastolic : '-'}</td>
-                        <td class="${hrClass}">${record.heartRate || '-'}</td>
+                        <td class="${morningHRClass}">${record.morningHeartRate || '-'}</td>
+                        <td class="${eveningHRClass}">${record.eveningHeartRate || '-'}</td>
                         <td class="mood-cell">${getMoodEmoji(record.mood)}</td>
                         <td>
                             <button class="compact-btn" style="background:#6c757d; color:white;" onclick="editRecord('${record.date}')">编辑</button>
@@ -886,7 +917,7 @@
             const sortedData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
             const dates = sortedData.map(d => formatDate(d.date, true));
             
-            // 血糖图表
+            // 血糖图表 - 空腹、早2h、午2h、晚2h分开显示
             const glucoseCtx = document.getElementById('glucoseChart').getContext('2d');
             if (glucoseChart) glucoseChart.destroy();
             
@@ -904,18 +935,26 @@
                             fill: true
                         },
                         {
-                            label: '早餐后2h',
+                            label: '早餐2h',
                             data: sortedData.map(d => d.breakfast2h),
-                            borderColor: '#764ba2',
-                            backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
                             tension: 0.4,
                             fill: true
                         },
                         {
-                            label: '午餐后2h',
+                            label: '午餐2h',
                             data: sortedData.map(d => d.lunch2h),
-                            borderColor: '#f093fb',
-                            backgroundColor: 'rgba(240, 147, 251, 0.1)',
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '晚餐2h',
+                            data: sortedData.map(d => d.dinner2h),
+                            borderColor: '#ffc107',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
                             tension: 0.4,
                             fill: true
                         }
@@ -936,9 +975,24 @@
                 }
             });
             
-            // 血压图表
+            // 血压图表 - 只显示平均血压，不区分早晚
             const bpCtx = document.getElementById('bpChart').getContext('2d');
             if (bpChart) bpChart.destroy();
+            
+            // 计算每日的平均血压
+            const dailyAvgSystolic = sortedData.map(record => {
+                const values = [];
+                if (record.morningSystolic) values.push(record.morningSystolic);
+                if (record.eveningSystolic) values.push(record.eveningSystolic);
+                return values.length > 0 ? Math.round(values.reduce((a, b) => a + b) / values.length) : null;
+            });
+            
+            const dailyAvgDiastolic = sortedData.map(record => {
+                const values = [];
+                if (record.morningDiastolic) values.push(record.morningDiastolic);
+                if (record.eveningDiastolic) values.push(record.eveningDiastolic);
+                return values.length > 0 ? Math.round(values.reduce((a, b) => a + b) / values.length) : null;
+            });
             
             bpChart = new Chart(bpCtx, {
                 type: 'line',
@@ -946,34 +1000,18 @@
                     labels: dates,
                     datasets: [
                         {
-                            label: '早晨收缩压',
-                            data: sortedData.map(d => d.morningSystolic),
+                            label: '平均收缩压',
+                            data: dailyAvgSystolic,
                             borderColor: '#ff6b6b',
                             backgroundColor: 'rgba(255, 107, 107, 0.1)',
                             tension: 0.4,
                             fill: true
                         },
                         {
-                            label: '早晨舒张压',
-                            data: sortedData.map(d => d.morningDiastolic),
+                            label: '平均舒张压',
+                            data: dailyAvgDiastolic,
                             borderColor: '#4ecdc4',
                             backgroundColor: 'rgba(78, 205, 196, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: '晚间收缩压',
-                            data: sortedData.map(d => d.eveningSystolic),
-                            borderColor: '#ff9f43',
-                            backgroundColor: 'rgba(255, 159, 67, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: '晚间舒张压',
-                            data: sortedData.map(d => d.eveningDiastolic),
-                            borderColor: '#54a0ff',
-                            backgroundColor: 'rgba(84, 160, 255, 0.1)',
                             tension: 0.4,
                             fill: true
                         }
@@ -1002,6 +1040,7 @@
             
             if (record) {
                 document.getElementById('date').value = record.date;
+                // 血糖数据
                 document.getElementById('fastingGlucose').value = record.fastingGlucose || '';
                 document.getElementById('breakfast2h').value = record.breakfast2h || '';
                 document.getElementById('breakfast3h').value = record.breakfast3h || '';
@@ -1009,11 +1048,13 @@
                 document.getElementById('lunch3h').value = record.lunch3h || '';
                 document.getElementById('dinner2h').value = record.dinner2h || '';
                 document.getElementById('dinner3h').value = record.dinner3h || '';
+                // 血压心率数据
                 document.getElementById('morningSystolic').value = record.morningSystolic || '';
                 document.getElementById('morningDiastolic').value = record.morningDiastolic || '';
+                document.getElementById('morningHeartRate').value = record.morningHeartRate || '';
                 document.getElementById('eveningSystolic').value = record.eveningSystolic || '';
                 document.getElementById('eveningDiastolic').value = record.eveningDiastolic || '';
-                document.getElementById('heartRate').value = record.heartRate || '';
+                document.getElementById('eveningHeartRate').value = record.eveningHeartRate || '';
                 document.getElementById('note').value = record.note || '';
                 
                 if (record.mood) {
@@ -1066,9 +1107,10 @@
                 '晚餐后3-4h': record.dinner3h || '',
                 '早晨收缩压': record.morningSystolic || '',
                 '早晨舒张压': record.morningDiastolic || '',
+                '早晨心率': record.morningHeartRate || '',
                 '晚间收缩压': record.eveningSystolic || '',
                 '晚间舒张压': record.eveningDiastolic || '',
-                '心率': record.heartRate || '',
+                '晚间心率': record.eveningHeartRate || '',
                 '心情': moodText[record.mood] || '',
                 '备注': record.note || ''
             }));
