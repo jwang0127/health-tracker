@@ -3,38 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人健康数据追踪系统</title>
+    <title>详细健康数据追踪</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         
         body {
             font-family: 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            background: #f0f2f5;
+            line-height: 1.6;
             color: #333;
+            padding: 20px;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
         }
         
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 25px 30px;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
             text-align: center;
+            margin-bottom: 20px;
         }
         
         h1 {
@@ -50,34 +48,27 @@
         .main-content {
             display: flex;
             flex-wrap: wrap;
-            padding: 20px;
+            gap: 20px;
         }
         
-        .left-panel {
+        .left-panel, .right-panel {
             flex: 1;
             min-width: 300px;
-            padding: 20px;
-        }
-        
-        .right-panel {
-            flex: 2;
-            min-width: 500px;
-            padding: 20px;
         }
         
         .card {
-            background: #f8f9fa;
+            background: white;
             border-radius: 10px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 20px;
-            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         h2 {
             color: #667eea;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #f0f2f5;
         }
         
         h3 {
@@ -85,9 +76,9 @@
             margin-bottom: 15px;
         }
         
-        .input-group {
+        .input-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -98,9 +89,9 @@
         
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #495057;
+            margin-bottom: 8px;
             font-weight: 500;
+            color: #495057;
         }
         
         input, textarea, select {
@@ -118,9 +109,45 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        textarea {
-            min-height: 60px;
-            resize: vertical;
+        .meal-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .meal-title {
+            color: #495057;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .mood-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .mood-option {
+            padding: 8px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .mood-option:hover {
+            transform: translateY(-2px);
+        }
+        
+        .mood-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
         }
         
         .btn-group {
@@ -173,47 +200,10 @@
             transform: translateY(-2px);
         }
         
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-        
         .chart-container {
             position: relative;
             height: 300px;
-            margin-bottom: 20px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .stat-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #e9ecef;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #6c757d;
-            margin-top: 5px;
+            margin: 20px 0;
         }
         
         table {
@@ -237,15 +227,34 @@
             background: #f8f9fa;
         }
         
-        .date-cell {
-            white-space: nowrap;
+        .mood-cell {
+            font-size: 20px;
         }
         
-        .note-cell {
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
         }
         
         .alert {
@@ -267,43 +276,21 @@
             border: 1px solid #ffeaa7;
         }
         
-        .target-settings {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .target-item {
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-left: 5px;
-        }
-        
-        .status-normal { background: #28a745; }
-        .status-warning { background: #ffc107; }
-        .status-danger { background: #dc3545; }
-        
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
             }
             
-            .left-panel, .right-panel {
-                min-width: 100%;
+            .input-grid {
+                grid-template-columns: 1fr;
             }
             
-            .input-group {
-                grid-template-columns: 1fr;
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
             }
         }
     </style>
@@ -311,13 +298,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>📊 个人健康数据追踪系统</h1>
-            <p class="subtitle">记录血糖、血压、心率，生成趋势图表，数据本地安全存储</p>
+            <h1>📊 详细健康数据追踪系统</h1>
+            <p class="subtitle">记录三餐血糖、血压、心率及心情状态，数据本地安全存储</p>
         </header>
         
         <div class="main-content">
-            <!-- 左侧面板：数据录入 -->
             <div class="left-panel">
+                <!-- 数据录入卡片 -->
                 <div class="card">
                     <h2>📝 今日数据录入</h2>
                     
@@ -326,86 +313,114 @@
                         <input type="date" id="date" value="">
                     </div>
                     
-                    <div class="input-group">
-                        <div class="form-group">
-                            <label for="fastingGlucose">空腹血糖 (mmol/L)</label>
-                            <input type="number" id="fastingGlucose" step="0.1" min="2" max="30" placeholder="如：5.6">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="glucose2h">餐后2h血糖 (mmol/L)</label>
-                            <input type="number" id="glucose2h" step="0.1" min="2" max="30" placeholder="如：7.8">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="glucose3h">餐后3h血糖 (mmol/L)</label>
-                            <input type="number" id="glucose3h" step="0.1" min="2" max="30" placeholder="如：6.5">
+                    <!-- 空腹血糖 -->
+                    <div class="meal-section">
+                        <div class="meal-title">🩸 空腹血糖</div>
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <label for="fastingGlucose">空腹血糖 (mmol/L)</label>
+                                <input type="number" id="fastingGlucose" step="0.1" min="2" max="30" placeholder="如：5.6">
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="input-group">
-                        <div class="form-group">
-                            <label for="systolic">收缩压 (高压 mmHg)</label>
-                            <input type="number" id="systolic" min="50" max="250" placeholder="如：120">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="diastolic">舒张压 (低压 mmHg)</label>
-                            <input type="number" id="diastolic" min="30" max="150" placeholder="如：80">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="heartRate">心率 (次/分钟)</label>
-                            <input type="number" id="heartRate" min="40" max="200" placeholder="如：72">
+                    <!-- 早餐后 -->
+                    <div class="meal-section">
+                        <div class="meal-title">🌅 早餐后</div>
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <label for="breakfast2h">餐后2小时 (mmol/L)</label>
+                                <input type="number" id="breakfast2h" step="0.1" min="2" max="30" placeholder="如：7.8">
+                            </div>
+                            <div class="form-group">
+                                <label for="breakfast3h">餐后3-4小时 (mmol/L) 选填</label>
+                                <input type="number" id="breakfast3h" step="0.1" min="2" max="30" placeholder="如：6.5">
+                            </div>
                         </div>
                     </div>
                     
+                    <!-- 午餐后 -->
+                    <div class="meal-section">
+                        <div class="meal-title">🌞 午餐后</div>
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <label for="lunch2h">餐后2小时 (mmol/L)</label>
+                                <input type="number" id="lunch2h" step="0.1" min="2" max="30" placeholder="如：7.8">
+                            </div>
+                            <div class="form-group">
+                                <label for="lunch3h">餐后3-4小时 (mmol/L) 选填</label>
+                                <input type="number" id="lunch3h" step="0.1" min="2" max="30" placeholder="如：6.5">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 晚餐后 -->
+                    <div class="meal-section">
+                        <div class="meal-title">🌙 晚餐后</div>
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <label for="dinner2h">餐后2小时 (mmol/L)</label>
+                                <input type="number" id="dinner2h" step="0.1" min="2" max="30" placeholder="如：7.8">
+                            </div>
+                            <div class="form-group">
+                                <label for="dinner3h">餐后3-4小时 (mmol/L) 选填</label>
+                                <input type="number" id="dinner3h" step="0.1" min="2" max="30" placeholder="如：6.5">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 血压和心率 -->
+                    <div class="meal-section">
+                        <div class="meal-title">💓 血压与心率</div>
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <label for="systolic">收缩压 (高压 mmHg)</label>
+                                <input type="number" id="systolic" min="50" max="250" placeholder="如：120">
+                            </div>
+                            <div class="form-group">
+                                <label for="diastolic">舒张压 (低压 mmHg)</label>
+                                <input type="number" id="diastolic" min="30" max="150" placeholder="如：80">
+                            </div>
+                            <div class="form-group">
+                                <label for="heartRate">心率 (次/分钟)</label>
+                                <input type="number" id="heartRate" min="40" max="200" placeholder="如：72">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 心情选择 -->
+                    <div class="meal-section">
+                        <div class="meal-title">😊 今日心情状态</div>
+                        <div class="mood-selector" id="moodSelector">
+                            <div class="mood-option" data-value="5" onclick="selectMood(5)">😁 很好</div>
+                            <div class="mood-option" data-value="4" onclick="selectMood(4)">😊 不错</div>
+                            <div class="mood-option" data-value="3" onclick="selectMood(3)">😐 一般</div>
+                            <div class="mood-option" data-value="2" onclick="selectMood(2)">😔 不太好</div>
+                            <div class="mood-option" data-value="1" onclick="selectMood(1)">😢 很差</div>
+                        </div>
+                        <input type="hidden" id="mood" value="">
+                    </div>
+                    
+                    <!-- 备注 -->
                     <div class="form-group">
-                        <label for="note">备注 / 身体状态</label>
-                        <textarea id="note" placeholder="如：昨晚睡眠良好，早晨服药后测量"></textarea>
+                        <label for="note">备注 / 身体状况描述</label>
+                        <textarea id="note" placeholder="如：昨晚睡眠良好，今天食欲正常"></textarea>
                     </div>
                     
+                    <!-- 按钮 -->
                     <div class="btn-group">
                         <button class="btn-primary" onclick="saveRecord()">
                             <span>💾 保存记录</span>
                         </button>
-                        <button class="btn-secondary" onclick="loadData()">
+                        <button class="btn-secondary" onclick="clearForm()">
+                            <span>🗑️ 清空表单</span>
+                        </button>
+                        <button class="btn-success" onclick="loadData()">
                             <span>🔄 刷新数据</span>
                         </button>
-                        <button class="btn-danger" onclick="clearToday()">
-                            <span>🗑️ 清除今日</span>
-                        </button>
                     </div>
-                </div>
-                
-                <!-- 目标值设置 -->
-                <div class="card">
-                    <h2>🎯 目标范围设置</h2>
-                    <div class="target-settings">
-                        <div class="target-item">
-                            <label>空腹血糖</label>
-                            <input type="number" id="targetFastingMin" value="3.9" step="0.1"> - 
-                            <input type="number" id="targetFastingMax" value="6.1" step="0.1">
-                        </div>
-                        <div class="target-item">
-                            <label>餐后血糖</label>
-                            <input type="number" id="targetPostMin" value="4.4" step="0.1"> - 
-                            <input type="number" id="targetPostMax" value="7.8" step="0.1">
-                        </div>
-                        <div class="target-item">
-                            <label>血压</label>
-                            <input type="number" id="targetBPMin" value="90" step="1">/ 
-                            <input type="number" id="targetBPMax" value="120" step="1">
-                        </div>
-                        <div class="target-item">
-                            <label>心率</label>
-                            <input type="number" id="targetHRMin" value="60" step="1"> - 
-                            <input type="number" id="targetHRMax" value="100" step="1">
-                        </div>
-                    </div>
-                    <button class="btn-secondary" onclick="saveTargets()" style="margin-top: 15px; width: 100%;">
-                        <span>💾 保存目标</span>
-                    </button>
+                    
+                    <div class="alert" id="alert"></div>
                 </div>
                 
                 <!-- 数据管理 -->
@@ -418,25 +433,23 @@
                         <button class="btn-secondary" onclick="importData()">
                             <span>📥 导入数据</span>
                         </button>
-                        <button class="btn-danger" onclick="clearAllData()">
+                        <button class="btn-danger" onclick="clearAllData()" style="background:#dc3545;">
                             <span>⚠️ 清空所有</span>
                         </button>
                     </div>
-                    <div class="alert" id="alert"></div>
                 </div>
             </div>
             
-            <!-- 右侧面板：数据显示 -->
             <div class="right-panel">
                 <!-- 统计概览 -->
                 <div class="card">
-                    <h2>📈 健康概览</h2>
+                    <h2>📈 今日统计</h2>
                     <div class="stats-grid" id="stats">
-                        <!-- 统计数据会动态生成在这里 -->
+                        <!-- 统计信息动态生成 -->
                     </div>
                 </div>
                 
-                <!-- 图表展示 -->
+                <!-- 血糖趋势图 -->
                 <div class="card">
                     <h2>📊 血糖趋势图</h2>
                     <div class="chart-container">
@@ -444,6 +457,7 @@
                     </div>
                 </div>
                 
+                <!-- 血压趋势图 -->
                 <div class="card">
                     <h2>📈 血压趋势图</h2>
                     <div class="chart-container">
@@ -460,16 +474,20 @@
                                 <tr>
                                     <th>日期</th>
                                     <th>空腹</th>
-                                    <th>餐后2h</th>
-                                    <th>餐后3h</th>
+                                    <th>早2h</th>
+                                    <th>早3h</th>
+                                    <th>午2h</th>
+                                    <th>午3h</th>
+                                    <th>晚2h</th>
+                                    <th>晚3h</th>
                                     <th>血压</th>
                                     <th>心率</th>
-                                    <th>备注</th>
+                                    <th>心情</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody id="historyBody">
-                                <!-- 数据会动态填充到这里 -->
+                                <!-- 数据动态填充 -->
                             </tbody>
                         </table>
                     </div>
@@ -482,14 +500,7 @@
         // 图表实例
         let glucoseChart = null;
         let bpChart = null;
-        
-        // 默认目标范围
-        const defaultTargets = {
-            fasting: { min: 3.9, max: 6.1 },
-            postMeal: { min: 4.4, max: 7.8 },
-            bloodPressure: { min: 90, max: 120 },
-            heartRate: { min: 60, max: 100 }
-        };
+        let currentMood = 0;
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -497,74 +508,48 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('date').value = today;
             
-            // 加载目标设置
-            loadTargets();
-            
             // 加载数据
             loadData();
         });
         
-        // 加载目标范围
-        function loadTargets() {
-            const targets = JSON.parse(localStorage.getItem('healthTargets')) || defaultTargets;
-            
-            document.getElementById('targetFastingMin').value = targets.fasting.min;
-            document.getElementById('targetFastingMax').value = targets.fasting.max;
-            document.getElementById('targetPostMin').value = targets.postMeal.min;
-            document.getElementById('targetPostMax').value = targets.postMeal.max;
-            document.getElementById('targetBPMin').value = targets.bloodPressure.min;
-            document.getElementById('targetBPMax').value = targets.bloodPressure.max;
-            document.getElementById('targetHRMin').value = targets.heartRate.min;
-            document.getElementById('targetHRMax').value = targets.heartRate.max;
-        }
-        
-        // 保存目标范围
-        function saveTargets() {
-            const targets = {
-                fasting: {
-                    min: parseFloat(document.getElementById('targetFastingMin').value),
-                    max: parseFloat(document.getElementById('targetFastingMax').value)
-                },
-                postMeal: {
-                    min: parseFloat(document.getElementById('targetPostMin').value),
-                    max: parseFloat(document.getElementById('targetPostMax').value)
-                },
-                bloodPressure: {
-                    min: parseInt(document.getElementById('targetBPMin').value),
-                    max: parseInt(document.getElementById('targetBPMax').value)
-                },
-                heartRate: {
-                    min: parseInt(document.getElementById('targetHRMin').value),
-                    max: parseInt(document.getElementById('targetHRMax').value)
+        // 选择心情
+        function selectMood(value) {
+            currentMood = value;
+            const options = document.querySelectorAll('.mood-option');
+            options.forEach(opt => {
+                if (parseInt(opt.dataset.value) === value) {
+                    opt.classList.add('selected');
+                } else {
+                    opt.classList.remove('selected');
                 }
-            };
-            
-            localStorage.setItem('healthTargets', JSON.stringify(targets));
-            showAlert('目标范围已保存！', 'success');
-            loadData(); // 刷新图表
+            });
+            document.getElementById('mood').value = value;
         }
         
         // 保存记录
         function saveRecord() {
             const record = {
                 date: document.getElementById('date').value,
+                // 血糖数据
                 fastingGlucose: parseFloat(document.getElementById('fastingGlucose').value) || null,
-                glucose2h: parseFloat(document.getElementById('glucose2h').value) || null,
-                glucose3h: parseFloat(document.getElementById('glucose3h').value) || null,
+                breakfast2h: parseFloat(document.getElementById('breakfast2h').value) || null,
+                breakfast3h: parseFloat(document.getElementById('breakfast3h').value) || null,
+                lunch2h: parseFloat(document.getElementById('lunch2h').value) || null,
+                lunch3h: parseFloat(document.getElementById('lunch3h').value) || null,
+                dinner2h: parseFloat(document.getElementById('dinner2h').value) || null,
+                dinner3h: parseFloat(document.getElementById('dinner3h').value) || null,
+                // 血压心率
                 systolic: parseInt(document.getElementById('systolic').value) || null,
                 diastolic: parseInt(document.getElementById('diastolic').value) || null,
                 heartRate: parseInt(document.getElementById('heartRate').value) || null,
+                // 心情备注
+                mood: currentMood,
                 note: document.getElementById('note').value.trim()
             };
             
-            // 验证必填项
+            // 验证
             if (!record.date) {
                 showAlert('请选择日期！', 'warning');
-                return;
-            }
-            
-            if (!record.fastingGlucose && !record.glucose2h && !record.systolic) {
-                showAlert('请至少填写一项数据！', 'warning');
                 return;
             }
             
@@ -574,17 +559,19 @@
             // 检查是否已存在该日期的记录
             const existingIndex = allData.findIndex(item => item.date === record.date);
             if (existingIndex >= 0) {
-                // 更新现有记录
-                allData[existingIndex] = { ...allData[existingIndex], ...record };
+                if (confirm('该日期已有记录，是否覆盖？')) {
+                    allData[existingIndex] = record;
+                } else {
+                    return;
+                }
             } else {
-                // 添加新记录
                 allData.push(record);
             }
             
             // 按日期排序
             allData.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // 保存到本地存储
+            // 保存
             localStorage.setItem('healthRecords', JSON.stringify(allData));
             
             showAlert('数据保存成功！', 'success');
@@ -592,85 +579,58 @@
             loadData();
         }
         
-        // 清除表单
+        // 清空表单
         function clearForm() {
-            document.getElementById('fastingGlucose').value = '';
-            document.getElementById('glucose2h').value = '';
-            document.getElementById('glucose3h').value = '';
-            document.getElementById('systolic').value = '';
-            document.getElementById('diastolic').value = '';
-            document.getElementById('heartRate').value = '';
-            document.getElementById('note').value = '';
-        }
-        
-        // 清除今日数据
-        function clearToday() {
+            // 清空所有输入框
+            document.querySelectorAll('input[type="number"], textarea').forEach(input => {
+                input.value = '';
+            });
+            
+            // 重置心情选择
+            document.querySelectorAll('.mood-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            currentMood = 0;
+            document.getElementById('mood').value = '';
+            
+            // 重置日期为今天
             const today = new Date().toISOString().split('T')[0];
-            let allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
-            
-            allData = allData.filter(item => item.date !== today);
-            localStorage.setItem('healthRecords', JSON.stringify(allData));
-            
-            showAlert('今日数据已清除！', 'success');
-            loadData();
+            document.getElementById('date').value = today;
         }
         
         // 加载并显示数据
         function loadData() {
             const allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
-            const targets = JSON.parse(localStorage.getItem('healthTargets')) || defaultTargets;
             
             // 更新统计信息
-            updateStats(allData, targets);
+            updateStats(allData);
             
             // 更新历史表格
-            updateHistoryTable(allData, targets);
+            updateHistoryTable(allData);
             
             // 更新图表
-            updateCharts(allData, targets);
+            updateCharts(allData);
         }
         
         // 更新统计信息
-        function updateStats(data, targets) {
+        function updateStats(data) {
             if (data.length === 0) {
                 document.getElementById('stats').innerHTML = '<p style="text-align: center; color: #6c757d;">暂无数据</p>';
                 return;
             }
             
-            // 计算空腹血糖统计
+            const latest = data[0]; // 最新记录
+            
+            // 计算平均值
             const fastingValues = data.map(d => d.fastingGlucose).filter(v => v !== null);
-            const fastingAvg = fastingValues.length ? (fastingValues.reduce((a, b) => a + b) / fastingValues.length).toFixed(1) : '-';
-            
-            // 计算血压统计
+            const breakfast2hValues = data.map(d => d.breakfast2h).filter(v => v !== null);
             const systolicValues = data.map(d => d.systolic).filter(v => v !== null);
-            const systolicAvg = systolicValues.length ? Math.round(systolicValues.reduce((a, b) => a + b) / systolicValues.length) : '-';
-            
             const diastolicValues = data.map(d => d.diastolic).filter(v => v !== null);
+            
+            const fastingAvg = fastingValues.length ? (fastingValues.reduce((a, b) => a + b) / fastingValues.length).toFixed(1) : '-';
+            const breakfast2hAvg = breakfast2hValues.length ? (breakfast2hValues.reduce((a, b) => a + b) / breakfast2hValues.length).toFixed(1) : '-';
+            const systolicAvg = systolicValues.length ? Math.round(systolicValues.reduce((a, b) => a + b) / systolicValues.length) : '-';
             const diastolicAvg = diastolicValues.length ? Math.round(diastolicValues.reduce((a, b) => a + b) / diastolicValues.length) : '-';
-            
-            // 计算心率统计
-            const hrValues = data.map(d => d.heartRate).filter(v => v !== null);
-            const hrAvg = hrValues.length ? Math.round(hrValues.reduce((a, b) => a + b) / hrValues.length) : '-';
-            
-            // 统计在目标范围内的比例
-            let fastingInRange = 0;
-            let bpInRange = 0;
-            
-            fastingValues.forEach(value => {
-                if (value >= targets.fasting.min && value <= targets.fasting.max) fastingInRange++;
-            });
-            
-            for (let i = 0; i < systolicValues.length; i++) {
-                if (systolicValues[i] && diastolicValues[i]) {
-                    if (systolicValues[i] <= targets.bloodPressure.max && 
-                        diastolicValues[i] <= targets.bloodPressure.min) {
-                        bpInRange++;
-                    }
-                }
-            }
-            
-            const fastingRangePercent = fastingValues.length ? Math.round((fastingInRange / fastingValues.length) * 100) : 0;
-            const bpRangePercent = systolicValues.length ? Math.round((bpInRange / systolicValues.length) * 100) : 0;
             
             const statsHTML = `
                 <div class="stat-item">
@@ -679,74 +639,65 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${fastingAvg}</div>
-                    <div class="stat-label">平均空腹血糖</div>
+                    <div class="stat-label">平均空腹</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${breakfast2hAvg}</div>
+                    <div class="stat-label">平均早2h</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${systolicAvg}/${diastolicAvg}</div>
                     <div class="stat-label">平均血压</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">${hrAvg}</div>
-                    <div class="stat-label">平均心率</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${fastingRangePercent}%</div>
-                    <div class="stat-label">血糖达标率</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${bpRangePercent}%</div>
-                    <div class="stat-label">血压达标率</div>
+                    <div class="stat-value">${getMoodEmoji(latest.mood)}</div>
+                    <div class="stat-label">今日心情</div>
                 </div>
             `;
             
             document.getElementById('stats').innerHTML = statsHTML;
         }
         
+        // 获取心情表情
+        function getMoodEmoji(moodValue) {
+            const moodMap = {
+                5: '😁',
+                4: '😊',
+                3: '😐',
+                2: '😔',
+                1: '😢',
+                0: '-'
+            };
+            return moodMap[moodValue] || '-';
+        }
+        
         // 更新历史表格
-        function updateHistoryTable(data, targets) {
+        function updateHistoryTable(data) {
             const tbody = document.getElementById('historyBody');
             
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录，请添加第一条数据</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录，请添加第一条数据</td></tr>';
                 return;
             }
             
             let html = '';
             data.forEach((record, index) => {
-                // 判断血糖状态
-                let glucoseStatus = 'normal';
-                if (record.fastingGlucose) {
-                    if (record.fastingGlucose < targets.fasting.min || record.fastingGlucose > targets.fasting.max) {
-                        glucoseStatus = 'warning';
-                    }
-                    if (record.fastingGlucose > targets.fasting.max + 2) {
-                        glucoseStatus = 'danger';
-                    }
-                }
-                
-                // 判断血压状态
-                let bpStatus = 'normal';
-                if (record.systolic && record.diastolic) {
-                    if (record.systolic > targets.bloodPressure.max || record.diastolic > targets.bloodPressure.min) {
-                        bpStatus = 'warning';
-                    }
-                    if (record.systolic > targets.bloodPressure.max + 20) {
-                        bpStatus = 'danger';
-                    }
-                }
-                
                 html += `
                     <tr>
-                        <td class="date-cell">${formatDate(record.date)}</td>
-                        <td>${record.fastingGlucose || '-'}<span class="status-indicator status-${glucoseStatus}"></span></td>
-                        <td>${record.glucose2h || '-'}</td>
-                        <td>${record.glucose3h || '-'}</td>
-                        <td>${record.systolic || '-'}/${record.diastolic || '-'}<span class="status-indicator status-${bpStatus}"></span></td>
+                        <td>${formatDate(record.date)}</td>
+                        <td>${record.fastingGlucose || '-'}</td>
+                        <td>${record.breakfast2h || '-'}</td>
+                        <td>${record.breakfast3h || '-'}</td>
+                        <td>${record.lunch2h || '-'}</td>
+                        <td>${record.lunch3h || '-'}</td>
+                        <td>${record.dinner2h || '-'}</td>
+                        <td>${record.dinner3h || '-'}</td>
+                        <td>${record.systolic ? record.systolic + '/' + record.diastolic : '-'}</td>
                         <td>${record.heartRate || '-'}</td>
-                        <td class="note-cell" title="${record.note || ''}">${record.note || '-'}</td>
+                        <td class="mood-cell">${getMoodEmoji(record.mood)}</td>
                         <td>
-                            <button class="btn-secondary" style="padding: 5px 10px; font-size: 12px;" onclick="editRecord('${record.date}')">✏️</button>
-                            <button class="btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deleteRecord('${record.date}')">🗑️</button>
+                            <button onclick="editRecord('${record.date}')" style="padding:5px 10px; background:#6c757d; color:white; border:none; border-radius:4px; cursor:pointer;">编辑</button>
+                            <button onclick="deleteRecord('${record.date}')" style="padding:5px 10px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer; margin-left:5px;">删除</button>
                         </td>
                     </tr>
                 `;
@@ -756,9 +707,8 @@
         }
         
         // 更新图表
-        function updateCharts(data, targets) {
+        function updateCharts(data) {
             if (data.length === 0) {
-                // 清空图表
                 if (glucoseChart) glucoseChart.destroy();
                 if (bpChart) bpChart.destroy();
                 return;
@@ -786,16 +736,16 @@
                             fill: true
                         },
                         {
-                            label: '餐后2h血糖',
-                            data: sortedData.map(d => d.glucose2h),
+                            label: '早餐后2h',
+                            data: sortedData.map(d => d.breakfast2h),
                             borderColor: '#764ba2',
                             backgroundColor: 'rgba(118, 75, 162, 0.1)',
                             tension: 0.4,
                             fill: true
                         },
                         {
-                            label: '餐后3h血糖',
-                            data: sortedData.map(d => d.glucose3h),
+                            label: '午餐后2h',
+                            data: sortedData.map(d => d.lunch2h),
                             borderColor: '#f093fb',
                             backgroundColor: 'rgba(240, 147, 251, 0.1)',
                             tension: 0.4,
@@ -806,20 +756,6 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        annotation: {
-                            annotations: {
-                                targetRange: {
-                                    type: 'box',
-                                    yMin: targets.fasting.min,
-                                    yMax: targets.fasting.max,
-                                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                                    borderColor: 'rgba(76, 175, 80, 0.5)',
-                                    borderWidth: 1
-                                }
-                            }
-                        }
-                    },
                     scales: {
                         y: {
                             beginAtZero: false,
@@ -883,12 +819,20 @@
             if (record) {
                 document.getElementById('date').value = record.date;
                 document.getElementById('fastingGlucose').value = record.fastingGlucose || '';
-                document.getElementById('glucose2h').value = record.glucose2h || '';
-                document.getElementById('glucose3h').value = record.glucose3h || '';
+                document.getElementById('breakfast2h').value = record.breakfast2h || '';
+                document.getElementById('breakfast3h').value = record.breakfast3h || '';
+                document.getElementById('lunch2h').value = record.lunch2h || '';
+                document.getElementById('lunch3h').value = record.lunch3h || '';
+                document.getElementById('dinner2h').value = record.dinner2h || '';
+                document.getElementById('dinner3h').value = record.dinner3h || '';
                 document.getElementById('systolic').value = record.systolic || '';
                 document.getElementById('diastolic').value = record.diastolic || '';
                 document.getElementById('heartRate').value = record.heartRate || '';
                 document.getElementById('note').value = record.note || '';
+                
+                if (record.mood) {
+                    selectMood(record.mood);
+                }
                 
                 showAlert('已加载该日期的数据，修改后点击保存即可更新', 'success');
             }
@@ -906,7 +850,7 @@
             }
         }
         
-        // 导出为Excel
+        // 导出Excel
         function exportToExcel() {
             const allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
             
@@ -916,38 +860,35 @@
             }
             
             // 准备数据
+            const moodText = {
+                5: '很好 😁',
+                4: '不错 😊',
+                3: '一般 😐',
+                2: '不太好 😔',
+                1: '很差 😢',
+                0: ''
+            };
+            
             const exportData = allData.map(record => ({
                 '日期': record.date,
-                '空腹血糖(mmol/L)': record.fastingGlucose || '',
-                '餐后2h血糖(mmol/L)': record.glucose2h || '',
-                '餐后3h血糖(mmol/L)': record.glucose3h || '',
-                '收缩压(mmHg)': record.systolic || '',
-                '舒张压(mmHg)': record.diastolic || '',
-                '心率(次/分)': record.heartRate || '',
+                '空腹血糖': record.fastingGlucose || '',
+                '早餐后2h': record.breakfast2h || '',
+                '早餐后3-4h': record.breakfast3h || '',
+                '午餐后2h': record.lunch2h || '',
+                '午餐后3-4h': record.lunch3h || '',
+                '晚餐后2h': record.dinner2h || '',
+                '晚餐后3-4h': record.dinner3h || '',
+                '收缩压': record.systolic || '',
+                '舒张压': record.diastolic || '',
+                '心率': record.heartRate || '',
+                '心情': moodText[record.mood] || '',
                 '备注': record.note || ''
             }));
             
-            // 创建工作表
             const ws = XLSX.utils.json_to_sheet(exportData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, '健康数据');
             
-            // 添加统计信息
-            const stats = calculateStats(allData);
-            const statsData = [
-                ['统计项目', '数值'],
-                ['总记录数', stats.total],
-                ['空腹血糖平均值', stats.avgFasting],
-                ['收缩压平均值', stats.avgSystolic],
-                ['舒张压平均值', stats.avgDiastolic],
-                ['心率平均值', stats.avgHeartRate],
-                ['导出日期', new Date().toLocaleDateString()]
-            ];
-            
-            const ws2 = XLSX.utils.aoa_to_sheet(statsData);
-            XLSX.utils.book_append_sheet(wb, ws2, '统计信息');
-            
-            // 导出文件
             const fileName = `健康数据_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, fileName);
             showAlert(`数据已导出为 ${fileName}`, 'success');
@@ -967,30 +908,7 @@
                 reader.onload = function(e) {
                     try {
                         const content = e.target.result;
-                        let importedData;
-                        
-                        if (file.name.endsWith('.json')) {
-                            importedData = JSON.parse(content);
-                        } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-                            const workbook = XLSX.read(content, { type: 'binary' });
-                            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                            importedData = XLSX.utils.sheet_to_json(sheet);
-                            
-                            // 转换列名
-                            importedData = importedData.map(row => ({
-                                date: row['日期'],
-                                fastingGlucose: row['空腹血糖(mmol/L)'],
-                                glucose2h: row['餐后2h血糖(mmol/L)'],
-                                glucose3h: row['餐后3h血糖(mmol/L)'],
-                                systolic: row['收缩压(mmHg)'],
-                                diastolic: row['舒张压(mmHg)'],
-                                heartRate: row['心率(次/分)'],
-                                note: row['备注']
-                            }));
-                        } else {
-                            showAlert('不支持的文件格式！', 'warning');
-                            return;
-                        }
+                        let importedData = JSON.parse(content);
                         
                         if (confirm(`找到 ${importedData.length} 条记录，是否导入？`)) {
                             localStorage.setItem('healthRecords', JSON.stringify(importedData));
@@ -999,15 +917,10 @@
                         }
                     } catch (error) {
                         showAlert('导入失败，请检查文件格式！', 'warning');
-                        console.error(error);
                     }
                 };
                 
-                if (file.name.endsWith('.json')) {
-                    reader.readAsText(file);
-                } else {
-                    reader.readAsBinaryString(file);
-                }
+                reader.readAsText(file);
             };
             
             input.click();
@@ -1020,22 +933,6 @@
                 showAlert('所有数据已清空！', 'success');
                 loadData();
             }
-        }
-        
-        // 计算统计信息
-        function calculateStats(data) {
-            const fastingValues = data.map(d => d.fastingGlucose).filter(v => v !== null);
-            const systolicValues = data.map(d => d.systolic).filter(v => v !== null);
-            const diastolicValues = data.map(d => d.diastolic).filter(v => v !== null);
-            const hrValues = data.map(d => d.heartRate).filter(v => v !== null);
-            
-            return {
-                total: data.length,
-                avgFasting: fastingValues.length ? (fastingValues.reduce((a, b) => a + b) / fastingValues.length).toFixed(1) : '-',
-                avgSystolic: systolicValues.length ? Math.round(systolicValues.reduce((a, b) => a + b) / systolicValues.length) : '-',
-                avgDiastolic: diastolicValues.length ? Math.round(diastolicValues.reduce((a, b) => a + b) / diastolicValues.length) : '-',
-                avgHeartRate: hrValues.length ? Math.round(hrValues.reduce((a, b) => a + b) / hrValues.length) : '-'
-            };
         }
         
         // 显示提示
