@@ -40,6 +40,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
         
         .date-label {
@@ -262,35 +263,38 @@
             margin-top: 4px;
         }
         
-        .sub-stats {
-            font-size: 12px;
-            color: #6c757d;
-            margin-top: 2px;
-        }
-        
         .chart-container {
             height: 250px;
             margin: 10px 0;
         }
         
-        .chart-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .tab-buttons {
+            display: flex;
+            gap: 5px;
             margin-bottom: 20px;
+            border-bottom: 2px solid #f0f2f5;
         }
         
-        .chart-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 14px;
         }
         
-        .chart-card h3 {
-            color: #4b6cb7;
-            margin-bottom: 15px;
-            font-size: 16px;
+        .tab-btn.active {
+            background: #4b6cb7;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         table {
@@ -331,13 +335,6 @@
             font-size: 16px;
         }
         
-        .medication-cell {
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
         .compact-btn {
             padding: 4px 8px;
             font-size: 12px;
@@ -363,41 +360,6 @@
             border: 1px solid #ffeaa7;
         }
         
-        .medication-inputs {
-            margin-top: 10px;
-        }
-        
-        .med-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .med-input {
-            flex: 1;
-        }
-        
-        .add-med-btn {
-            background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 12px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .remove-med-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 10px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
         .lipid-inputs {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -405,13 +367,43 @@
             margin-top: 10px;
         }
         
+        .time-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .time-label {
+            font-weight: 500;
+            color: #495057;
+            min-width: 60px;
+        }
+        
+        .medication-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .med-select {
+            flex: 1;
+        }
+        
+        .history-table-wrapper {
+            overflow-x: auto;
+        }
+        
+        .med-name-cell, .med-details-cell {
+            text-align: left;
+        }
+        
+        .date-time-cell {
+            white-space: nowrap;
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
-            }
-            
-            .chart-row {
-                grid-template-columns: 1fr;
             }
             
             .input-group {
@@ -426,7 +418,17 @@
                 flex-direction: column;
             }
             
-            .med-row {
+            .tab-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+            
+            .medication-controls {
                 flex-direction: column;
             }
             
@@ -437,23 +439,23 @@
             button {
                 width: 100%;
             }
-            
-            .table-wrapper {
-                overflow-x: auto;
-            }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 style="font-size: 20px; margin-bottom: 5px;">健康数据追踪</h1>
-        <p style="opacity: 0.9; font-size: 13px;">记录血糖、血压、心率、用药、血脂及心情状态</p>
+        <p style="opacity: 0.9; font-size: 13px;">记录血糖、血压、心率、血脂、药物及心情状态</p>
     </div>
     
     <div class="date-section">
         <div class="date-row">
-            <span class="date-label">📅 选择日期：</span>
+            <span class="date-label">📅 测量日期：</span>
             <input type="date" id="date" class="date-input" value="">
+            <div class="time-input-group">
+                <span class="time-label">时间：</span>
+                <input type="time" id="time" class="date-input" style="min-width: 120px;">
+            </div>
         </div>
     </div>
     
@@ -601,18 +603,14 @@
                 <!-- 药物数据 -->
                 <div class="input-section">
                     <div class="section-title">
-                        <span>💊 目前服用药物</span>
-                        <button class="add-med-btn" onclick="addMedicationField()" style="margin-left: auto;">+ 添加药物</button>
+                        <span>💊 药物管理</span>
                     </div>
                     
-                    <div class="medication-inputs" id="medicationInputs">
-                        <!-- 药物输入框会动态添加到这里 -->
-                        <div class="med-row">
-                            <input type="text" class="med-input" placeholder="药物名称" data-type="name">
-                            <input type="text" class="med-input" placeholder="剂量" data-type="dose">
-                            <input type="text" class="med-input" placeholder="用法(如：早1片)" data-type="usage">
-                            <button class="remove-med-btn" onclick="removeMedicationField(this)">-</button>
-                        </div>
+                    <div class="medication-controls">
+                        <input type="text" id="medName" class="med-select" placeholder="药物名称">
+                        <input type="text" id="medDose" placeholder="剂量">
+                        <input type="text" id="medUsage" placeholder="用法(如：早1片)">
+                        <button class="btn-secondary" onclick="addMedication()">添加</button>
                     </div>
                 </div>
                 
@@ -682,65 +680,95 @@
                 </div>
             </div>
             
-            <!-- 新增的图表行 -->
-            <div class="chart-row">
-                <!-- 药物及剂量趋势图 -->
-                <div class="chart-card">
-                    <h3>💊 药物服用趋势</h3>
-                    <div class="chart-container">
-                        <canvas id="medicationChart"></canvas>
+            <!-- 低密度脂蛋白趋势图 -->
+            <div class="card">
+                <h2>🧪 血脂趋势</h2>
+                <div class="chart-container">
+                    <canvas id="lipidChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- 历史记录标签页 -->
+            <div class="card">
+                <h2>📋 历史记录</h2>
+                
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('daily-tab')">每日数据</button>
+                    <button class="tab-btn" onclick="switchTab('lipid-tab')">血脂记录</button>
+                    <button class="tab-btn" onclick="switchTab('medication-tab')">药物历史</button>
+                </div>
+                
+                <!-- 每日数据标签页 -->
+                <div id="daily-tab" class="tab-content active">
+                    <div class="history-table-wrapper">
+                        <table id="dailyHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>日期时间</th>
+                                    <th>空腹</th>
+                                    <th>早2h</th>
+                                    <th>早3h</th>
+                                    <th>午2h</th>
+                                    <th>午3h</th>
+                                    <th>晚2h</th>
+                                    <th>晚3h</th>
+                                    <th>晨压</th>
+                                    <th>晚压</th>
+                                    <th>晨心</th>
+                                    <th>晚心</th>
+                                    <th>心情</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dailyHistoryBody">
+                                <!-- 每日数据动态填充 -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
-                <!-- 低密度脂蛋白趋势图 -->
-                <div class="chart-card">
-                    <h3>🧪 低密度脂蛋白(LDL)趋势</h3>
-                    <div class="chart-container">
-                        <canvas id="ldlChart"></canvas>
+                <!-- 血脂记录标签页 -->
+                <div id="lipid-tab" class="tab-content">
+                    <div class="history-table-wrapper">
+                        <table id="lipidHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>LDL</th>
+                                    <th>HDL</th>
+                                    <th>TG</th>
+                                    <th>TC</th>
+                                    <th>备注</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lipidHistoryBody">
+                                <!-- 血脂数据动态填充 -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 血脂统计概览 -->
-            <div class="card">
-                <h2>🧪 血脂统计</h2>
-                <div class="stats-grid" id="lipidStats">
-                    <!-- 血脂统计信息动态生成 -->
-                </div>
-            </div>
-            
-            <!-- 历史记录 -->
-            <div class="card">
-                <h2>📋 历史记录</h2>
-                <div class="table-wrapper" style="overflow-x: auto;">
-                    <table id="historyTable">
-                        <thead>
-                            <tr>
-                                <th>日期</th>
-                                <th>空腹</th>
-                                <th>早2h</th>
-                                <th>早3h</th>
-                                <th>午2h</th>
-                                <th>午3h</th>
-                                <th>晚2h</th>
-                                <th>晚3h</th>
-                                <th>晨压</th>
-                                <th>晚压</th>
-                                <th>晨心</th>
-                                <th>晚心</th>
-                                <th>LDL</th>
-                                <th>HDL</th>
-                                <th>TG</th>
-                                <th>TC</th>
-                                <th>药物</th>
-                                <th>心情</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyBody">
-                            <!-- 数据动态填充 -->
-                        </tbody>
-                    </table>
+                
+                <!-- 药物历史标签页 -->
+                <div id="medication-tab" class="tab-content">
+                    <div class="history-table-wrapper">
+                        <table id="medicationHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>开始日期</th>
+                                    <th>药物名称</th>
+                                    <th>剂量</th>
+                                    <th>用法</th>
+                                    <th>结束日期</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="medicationHistoryBody">
+                                <!-- 药物数据动态填充 -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -750,34 +778,8 @@
         // 图表实例
         let glucoseChart = null;
         let bpChart = null;
-        let medicationChart = null;
-        let ldlChart = null;
+        let lipidChart = null;
         let currentMood = 0;
-        
-        // 血糖阈值
-        const glucoseThresholds = {
-            normal: { min: 3.9, max: 6.1 },       // 空腹正常范围
-            postMeal: { min: 4.4, max: 7.8 },     // 餐后正常范围
-            warning: 9.0,                         // 警告值
-            danger: 11.0                          // 危险值
-        };
-        
-        // 血压阈值
-        const bpThresholds = {
-            systolic: { normal: 120, warning: 140, danger: 160 },
-            diastolic: { normal: 80, warning: 90, danger: 100 }
-        };
-        
-        // 心率阈值
-        const hrThresholds = { min: 60, max: 100 };
-        
-        // 血脂阈值
-        const lipidThresholds = {
-            ldl: { normal: 3.4, warning: 4.1, danger: 4.9 },   // 低密度脂蛋白
-            hdl: { normal: 1.0, warning: 0.9, danger: 0.8 },   // 高密度脂蛋白
-            tg: { normal: 1.7, warning: 2.3, danger: 5.6 },    // 甘油三酯
-            tc: { normal: 5.2, warning: 6.2, danger: 7.2 }     // 总胆固醇
-        };
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -785,30 +787,29 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('date').value = today;
             
+            // 设置默认时间为当前时间
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                              now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('time').value = timeString;
+            
             // 加载数据
             loadData();
         });
         
-        // 添加药物输入框
-        function addMedicationField() {
-            const container = document.getElementById('medicationInputs');
-            const newRow = document.createElement('div');
-            newRow.className = 'med-row';
-            newRow.innerHTML = `
-                <input type="text" class="med-input" placeholder="药物名称" data-type="name">
-                <input type="text" class="med-input" placeholder="剂量" data-type="dose">
-                <input type="text" class="med-input" placeholder="用法(如：早1片)" data-type="usage">
-                <button class="remove-med-btn" onclick="removeMedicationField(this)">-</button>
-            `;
-            container.appendChild(newRow);
-        }
-        
-        // 移除药物输入框
-        function removeMedicationField(button) {
-            const row = button.parentElement;
-            if (document.querySelectorAll('.med-row').length > 1) {
-                row.remove();
-            }
+        // 切换标签页
+        function switchTab(tabId) {
+            // 移除所有active类
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content')..forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 激活选中的标签页
+            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
         }
         
         // 选择心情
@@ -825,10 +826,92 @@
             document.getElementById('mood').value = value;
         }
         
-        // 保存记录
+        // 添加药物记录
+        function addMedication() {
+            const medName = document.getElementById('medName').value.trim();
+            const medDose = document.getElementById('medDose').value.trim();
+            const medUsage = document.getElementById('medUsage').value.trim();
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (!medName) {
+                showAlert('请输入药物名称！', 'warning');
+                return;
+            }
+            
+            const medicationRecord = {
+                id: Date.now().toString(),
+                startDate: today,
+                endDate: '',
+                name: medName,
+                dose: medDose,
+                usage: medUsage,
+                note: '',
+                createdAt: new Date().toISOString()
+            };
+            
+            // 获取现有药物记录
+            let allMedications = JSON.parse(localStorage.getItem('healthMedications')) || [];
+            allMedications.push(medicationRecord);
+            
+            // 按开始日期排序
+            allMedications.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+            
+            // 保存
+            localStorage.setItem('healthMedications', JSON.stringify(allMedications));
+            
+            // 清空表单
+            document.getElementById('medName').value = '';
+            document.getElementById('medDose').value = '';
+            document.getElementById('medUsage').value = '';
+            
+            showAlert('药物记录已添加！', 'success');
+            loadData();
+        }
+        
+        // 结束药物
+        function endMedication(id) {
+            const today = new Date().toISOString().split('T')[0];
+            let allMedications = JSON.parse(localStorage.getItem('healthMedications')) || [];
+            const medication = allMedications.find(m => m.id === id);
+            
+            if (medication && !medication.endDate) {
+                medication.endDate = today;
+                localStorage.setItem('healthMedications', JSON.stringify(allMedications));
+                showAlert('药物已标记为结束！', 'success');
+                loadData();
+            }
+        }
+        
+        // 删除药物记录
+        function deleteMedication(id) {
+            if (confirm('确定要删除此药物记录吗？')) {
+                let allMedications = JSON.parse(localStorage.getItem('healthMedications')) || [];
+                allMedications = allMedications.filter(m => m.id !== id);
+                localStorage.setItem('healthMedications', JSON.stringify(allMedications));
+                showAlert('药物记录已删除！', 'success');
+                loadData();
+            }
+        }
+        
+        // 保存健康记录
         function saveRecord() {
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            
+            if (!date) {
+                showAlert('请选择日期！', 'warning');
+                return;
+            }
+            
+            if (!time) {
+                showAlert('请选择时间！', 'warning');
+                return;
+            }
+            
             const record = {
-                date: document.getElementById('date').value,
+                id: `${date}_${time}_${Date.now()}`, // 唯一ID
+                date: date,
+                time: time,
                 // 血糖数据
                 fastingGlucose: parseFloat(document.getElementById('fastingGlucose').value) || null,
                 breakfast2h: parseFloat(document.getElementById('breakfast2h').value) || null,
@@ -849,36 +932,26 @@
                 hdl: parseFloat(document.getElementById('hdl').value) || null,
                 triglyceride: parseFloat(document.getElementById('triglyceride').value) || null,
                 cholesterol: parseFloat(document.getElementById('cholesterol').value) || null,
-                // 药物数据
-                medications: getMedications(),
                 // 心情备注
                 mood: currentMood,
-                note: document.getElementById('note').value.trim()
+                note: document.getElementById('note').value.trim(),
+                createdAt: new Date().toISOString()
             };
-            
-            // 验证
-            if (!record.date) {
-                showAlert('请选择日期！', 'warning');
-                return;
-            }
             
             // 获取现有数据
             let allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
             
-            // 检查是否已存在该日期的记录
-            const existingIndex = allData.findIndex(item => item.date === record.date);
-            if (existingIndex >= 0) {
-                if (confirm('该日期已有记录，是否覆盖？')) {
-                    allData[existingIndex] = record;
-                } else {
-                    return;
-                }
-            } else {
-                allData.push(record);
-            }
+            // 添加新记录（不覆盖）
+            allData.push(record);
             
-            // 按日期排序
-            allData.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // 按日期时间排序
+            allData.sort((a, b) => {
+                const dateCompare = new Date(b.date) - new Date(a.date);
+                if (dateCompare === 0) {
+                    return b.time.localeCompare(a.time);
+                }
+                return dateCompare;
+            });
             
             // 保存
             localStorage.setItem('healthRecords', JSON.stringify(allData));
@@ -888,34 +961,14 @@
             loadData();
         }
         
-        // 获取药物数据
-        function getMedications() {
-            const medications = [];
-            const medRows = document.querySelectorAll('.med-row');
-            
-            medRows.forEach(row => {
-                const inputs = row.querySelectorAll('.med-input');
-                const name = inputs[0].value.trim();
-                const dose = inputs[1].value.trim();
-                const usage = inputs[2].value.trim();
-                
-                if (name || dose || usage) {
-                    medications.push({
-                        name: name,
-                        dose: dose,
-                        usage: usage
-                    });
-                }
-            });
-            
-            return medications.length > 0 ? medications : null;
-        }
-        
         // 清空表单
         function clearForm() {
             // 清空所有输入框
             document.querySelectorAll('input[type="number"], input[type="text"], textarea').forEach(input => {
-                input.value = '';
+                if (input.id !== 'date' && input.id !== 'time' && input.id !== 'medName' && 
+                    input.id !== 'medDose' && input.id !== 'medUsage') {
+                    input.value = '';
+                }
             });
             
             // 重置心情选择
@@ -925,33 +978,25 @@
             currentMood = 0;
             document.getElementById('mood').value = '';
             
-            // 重置药物输入框（保留一个）
-            const medInputs = document.querySelectorAll('.med-row');
-            medInputs.forEach((row, index) => {
-                if (index > 0) {
-                    row.remove();
-                } else {
-                    row.querySelectorAll('.med-input').forEach(input => {
-                        input.value = '';
-                    });
-                }
-            });
-            
-            // 重置日期为今天
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').value = today;
+            // 重置时间为当前时间
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                              now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('time').value = timeString;
         }
         
         // 加载并显示数据
         function loadData() {
             const allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
+            const allMedications = JSON.parse(localStorage.getItem('healthMedications')) || [];
             
             // 更新统计信息
             updateStats(allData);
-            updateLipidStats(allData);
             
             // 更新历史表格
-            updateHistoryTable(allData);
+            updateDailyHistoryTable(allData);
+            updateLipidHistoryTable(allData);
+            updateMedicationHistoryTable(allMedications);
             
             // 更新图表
             updateCharts(allData);
@@ -995,52 +1040,6 @@
             `;
             
             document.getElementById('stats').innerHTML = statsHTML;
-        }
-        
-        // 更新血脂统计
-        function updateLipidStats(data) {
-            const lipidData = data.filter(d => d.ldl !== null || d.hdl !== null || d.triglyceride !== null || d.cholesterol !== null);
-            
-            if (lipidData.length === 0) {
-                document.getElementById('lipidStats').innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1/-1;">暂无血脂数据</p>';
-                return;
-            }
-            
-            // 计算血脂平均值
-            const ldlValues = lipidData.map(d => d.ldl).filter(v => v !== null);
-            const hdlValues = lipidData.map(d => d.hdl).filter(v => v !== null);
-            const tgValues = lipidData.map(d => d.triglyceride).filter(v => v !== null);
-            const tcValues = lipidData.map(d => d.cholesterol).filter(v => v !== null);
-            
-            const avgLDL = ldlValues.length ? (ldlValues.reduce((a, b) => a + b) / ldlValues.length).toFixed(1) : '-';
-            const avgHDL = hdlValues.length ? (hdlValues.reduce((a, b) => a + b) / hdlValues.length).toFixed(1) : '-';
-            const avgTG = tgValues.length ? (tgValues.reduce((a, b) => a + b) / tgValues.length).toFixed(1) : '-';
-            const avgTC = tcValues.length ? (tcValues.reduce((a, b) => a + b) / tcValues.length).toFixed(1) : '-';
-            
-            const lipidStatsHTML = `
-                <div class="stat-item">
-                    <div class="stat-value">${lipidData.length}</div>
-                    <div class="stat-label">血脂记录数</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${avgLDL}</div>
-                    <div class="stat-label">平均LDL</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${avgHDL}</div>
-                    <div class="stat-label">平均HDL</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${avgTG}</div>
-                    <div class="stat-label">平均TG</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${avgTC}</div>
-                    <div class="stat-label">平均TC</div>
-                </div>
-            `;
-            
-            document.getElementById('lipidStats').innerHTML = lipidStatsHTML;
         }
         
         // 计算统计数据
@@ -1103,119 +1102,35 @@
             return moodMap[moodValue] || '-';
         }
         
-        // 获取药物简写
-        function getMedicationsShort(medications) {
-            if (!medications || medications.length === 0) return '-';
-            
-            return medications.map(med => 
-                `${med.name || ''}${med.dose ? ' ' + med.dose : ''}`
-            ).join(', ');
-        }
-        
-        // 检查血糖异常
-        function checkGlucoseAbnormal(value, isFasting = false) {
-            if (value === null) return '';
-            if (isFasting) {
-                if (value < glucoseThresholds.normal.min || value > glucoseThresholds.normal.max) {
-                    return value > glucoseThresholds.danger ? 'danger' : 'warning';
-                }
-            } else {
-                if (value < glucoseThresholds.postMeal.min || value > glucoseThresholds.postMeal.max) {
-                    return value > glucoseThresholds.danger ? 'danger' : 'warning';
-                }
-            }
-            return '';
-        }
-        
-        // 检查血压异常
-        function checkBPAbnormal(systolic, diastolic) {
-            if (systolic === null || diastolic === null) return '';
-            if (systolic > bpThresholds.systolic.danger || diastolic > bpThresholds.diastolic.danger) {
-                return 'danger';
-            } else if (systolic > bpThresholds.systolic.warning || diastolic > bpThresholds.diastolic.warning) {
-                return 'warning';
-            }
-            return '';
-        }
-        
-        // 检查心率异常
-        function checkHRAbnormal(value) {
-            if (value === null) return '';
-            if (value < hrThresholds.min || value > hrThresholds.max) {
-                return 'warning';
-            }
-            return '';
-        }
-        
-        // 检查血脂异常
-        function checkLipidAbnormal(value, type) {
-            if (value === null) return '';
-            const threshold = lipidThresholds[type];
-            if (type === 'hdl') {
-                // HDL越高越好
-                if (value < threshold.danger) return 'danger';
-                if (value < threshold.warning) return 'warning';
-            } else {
-                // 其他血脂越低越好
-                if (value > threshold.danger) return 'danger';
-                if (value > threshold.warning) return 'warning';
-            }
-            return '';
-        }
-        
-        // 更新历史表格
-        function updateHistoryTable(data) {
-            const tbody = document.getElementById('historyBody');
+        // 更新每日历史表格
+        function updateDailyHistoryTable(data) {
+            const tbody = document.getElementById('dailyHistoryBody');
             
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="19" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录，请添加第一条数据</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="15" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录</td></tr>';
                 return;
             }
             
             let html = '';
             data.forEach((record, index) => {
-                // 检查各项数据异常
-                const fastingClass = checkGlucoseAbnormal(record.fastingGlucose, true);
-                const breakfast2hClass = checkGlucoseAbnormal(record.breakfast2h, false);
-                const breakfast3hClass = checkGlucoseAbnormal(record.breakfast3h, false);
-                const lunch2hClass = checkGlucoseAbnormal(record.lunch2h, false);
-                const lunch3hClass = checkGlucoseAbnormal(record.lunch3h, false);
-                const dinner2hClass = checkGlucoseAbnormal(record.dinner2h, false);
-                const dinner3hClass = checkGlucoseAbnormal(record.dinner3h, false);
-                
-                const morningBPClass = checkBPAbnormal(record.morningSystolic, record.morningDiastolic);
-                const eveningBPClass = checkBPAbnormal(record.eveningSystolic, record.eveningDiastolic);
-                const morningHRClass = checkHRAbnormal(record.morningHeartRate);
-                const eveningHRClass = checkHRAbnormal(record.eveningHeartRate);
-                
-                const ldlClass = checkLipidAbnormal(record.ldl, 'ldl');
-                const hdlClass = checkLipidAbnormal(record.hdl, 'hdl');
-                const tgClass = checkLipidAbnormal(record.triglyceride, 'tg');
-                const tcClass = checkLipidAbnormal(record.cholesterol, 'tc');
-                
                 html += `
                     <tr>
-                        <td>${formatDate(record.date)}</td>
-                        <td class="${fastingClass}">${record.fastingGlucose || '-'}</td>
-                        <td class="${breakfast2hClass}">${record.breakfast2h || '-'}</td>
-                        <td class="${breakfast3hClass}">${record.breakfast3h || '-'}</td>
-                        <td class="${lunch2hClass}">${record.lunch2h || '-'}</td>
-                        <td class="${lunch3hClass}">${record.lunch3h || '-'}</td>
-                        <td class="${dinner2hClass}">${record.dinner2h || '-'}</td>
-                        <td class="${dinner3hClass}">${record.dinner3h || '-'}</td>
-                        <td class="${morningBPClass}">${record.morningSystolic ? record.morningSystolic + '/' + record.morningDiastolic : '-'}</td>
-                        <td class="${eveningBPClass}">${record.eveningSystolic ? record.eveningSystolic + '/' + record.eveningDiastolic : '-'}</td>
-                        <td class="${morningHRClass}">${record.morningHeartRate || '-'}</td>
-                        <td class="${eveningHRClass}">${record.eveningHeartRate || '-'}</td>
-                        <td class="${ldlClass}">${record.ldl || '-'}</td>
-                        <td class="${hdlClass}">${record.hdl || '-'}</td>
-                        <td class="${tgClass}">${record.triglyceride || '-'}</td>
-                        <td class="${tcClass}">${record.cholesterol || '-'}</td>
-                        <td class="medication-cell" title="${getMedicationsShort(record.medications)}">${getMedicationsShort(record.medications)}</td>
+                        <td class="date-time-cell">${formatDate(record.date)} ${record.time}</td>
+                        <td>${record.fastingGlucose || '-'}</td>
+                        <td>${record.breakfast2h || '-'}</td>
+                        <td>${record.breakfast3h || '-'}</td>
+                        <td>${record.lunch2h || '-'}</td>
+                        <td>${record.lunch3h || '-'}</td>
+                        <td>${record.dinner2h || '-'}</td>
+                        <td>${record.dinner3h || '-'}</td>
+                        <td>${record.morningSystolic ? record.morningSystolic + '/' + record.morningDiastolic : '-'}</td>
+                        <td>${record.eveningSystolic ? record.eveningSystolic + '/' + record.eveningDiastolic : '-'}</td>
+                        <td>${record.morningHeartRate || '-'}</td>
+                        <td>${record.eveningHeartRate || '-'}</td>
                         <td class="mood-cell">${getMoodEmoji(record.mood)}</td>
+                        <td>${record.note || '-'}</td>
                         <td>
-                            <button class="compact-btn" style="background:#6c757d; color:white;" onclick="editRecord('${record.date}')">编辑</button>
-                            <button class="compact-btn" style="background:#dc3545; color:white;" onclick="deleteRecord('${record.date}')">删除</button>
+                            <button class="compact-btn" style="background:#dc3545; color:white;" onclick="deleteRecord('${record.id}')">删除</button>
                         </td>
                     </tr>
                 `;
@@ -1224,13 +1139,84 @@
             tbody.innerHTML = html;
         }
         
+        // 更新血脂历史表格
+        function updateLipidHistoryTable(data) {
+            const tbody = document.getElementById('lipidHistoryBody');
+            const lipidData = data.filter(d => d.ldl !== null || d.hdl !== null || d.triglyceride !== null || d.cholesterol !== null);
+            
+            if (lipidData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #6c757d;">暂无血脂记录</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            lipidData.forEach((record, index) => {
+                html += `
+                    <tr>
+                        <td>${formatDate(record.date)}</td>
+                        <td>${record.ldl || '-'}</td>
+                        <td>${record.hdl || '-'}</td>
+                        <td>${record.triglyceride || '-'}</td>
+                        <td>${record.cholesterol || '-'}</td>
+                        <td>${record.note || '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        // 更新药物历史表格
+        function updateMedicationHistoryTable(data) {
+            const tbody = document.getElementById('medicationHistoryBody');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #6c757d;">暂无药物记录</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            data.forEach((record, index) => {
+                const status = record.endDate ? `<span style="color: #6c757d;">已结束 ${record.endDate}</span>` : 
+                    '<span style="color: #28a745; font-weight: bold;">服用中</span>';
+                
+                html += `
+                    <tr>
+                        <td>${formatDate(record.startDate)}</td>
+                        <td>${record.name}</td>
+                        <td>${record.dose || '-'}</td>
+                        <td>${record.usage || '-'}</td>
+                        <td>${status}</td>
+                        <td>${record.note || '-'}</td>
+                        <td>
+                            ${!record.endDate ? 
+                                `<button class="compact-btn" style="background:#6c757d; color:white;" onclick="endMedication('${record.id}')">结束</button>` : ''}
+                            <button class="compact-btn" style="background:#dc3545; color:white;" onclick="deleteMedication('${record.id}')">删除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        // 删除健康记录
+        function deleteRecord(id) {
+            if (confirm('确定要删除此记录吗？')) {
+                let allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
+                allData = allData.filter(item => item.id !== id);
+                localStorage.setItem('healthRecords', JSON.stringify(allData));
+                showAlert('记录已删除！', 'success');
+                loadData();
+            }
+        }
+        
         // 更新图表
         function updateCharts(data) {
             if (data.length === 0) {
                 if (glucoseChart) glucoseChart.destroy();
                 if (bpChart) bpChart.destroy();
-                if (medicationChart) medicationChart.destroy();
-                if (ldlChart) ldlChart.destroy();
+                if (lipidChart) lipidChart.destroy();
                 return;
             }
             
@@ -1238,7 +1224,7 @@
             const sortedData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
             const dates = sortedData.map(d => formatDate(d.date, true));
             
-            // 血糖图表 - 空腹、早2h、午2h、晚2h分开显示
+            // 血糖图表
             const glucoseCtx = document.getElementById('glucoseChart').getContext('2d');
             if (glucoseChart) glucoseChart.destroy();
             
@@ -1296,7 +1282,7 @@
                 }
             });
             
-            // 血压图表 - 只显示平均血压，不区分早晚
+            // 血压图表
             const bpCtx = document.getElementById('bpChart').getContext('2d');
             if (bpChart) bpChart.destroy();
             
@@ -1353,47 +1339,40 @@
                 }
             });
             
-            // 药物图表 - 显示主要药物变化
-            const medCtx = document.getElementById('medicationChart').getContext('2d');
-            if (medicationChart) medicationChart.destroy();
+            // 血脂图表
+            const lipidCtx = document.getElementById('lipidChart').getContext('2d');
+            if (lipidChart) lipidChart.destroy();
             
-            // 提取药物数据
-            const medicationData = extractMedicationData(sortedData);
-            medicationChart = new Chart(medCtx, {
-                type: 'bar',
-                data: {
-                    labels: dates,
-                    datasets: medicationData.datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: '药物使用天数'
-                            }
-                        }
-                    }
-                }
-            });
+            // 只取有血脂数据的记录
+            const lipidData = sortedData.filter(d => d.ldl !== null);
+            const lipidDates = lipidData.map(d => formatDate(d.date, true));
             
-            // LDL图表
-            const ldlCtx = document.getElementById('ldlChart').getContext('2d');
-            if (ldlChart) ldlChart.destroy();
-            
-            ldlChart = new Chart(ldlCtx, {
+            lipidChart = new Chart(lipidCtx, {
                 type: 'line',
                 data: {
-                    labels: dates,
+                    labels: lipidDates,
                     datasets: [
                         {
                             label: '低密度脂蛋白(LDL)',
-                            data: sortedData.map(d => d.ldl),
+                            data: lipidData.map(d => d.ldl),
                             borderColor: '#9c27b0',
                             backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '高密度脂蛋白(HDL)',
+                            data: lipidData.map(d => d.hdl),
+                            borderColor: '#4caf50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '甘油三酯(TG)',
+                            data: lipidData.map(d => d.triglyceride),
+                            borderColor: '#ff9800',
+                            backgroundColor: 'rgba(255, 152, 0, 0.1)',
                             tension: 0.4,
                             fill: true
                         }
@@ -1407,7 +1386,7 @@
                             beginAtZero: false,
                             title: {
                                 display: true,
-                                text: 'LDL值 (mmol/L)'
+                                text: '血脂值 (mmol/L)'
                             }
                         }
                     }
@@ -1415,165 +1394,71 @@
             });
         }
         
-        // 提取药物数据用于图表
-        function extractMedicationData(data) {
-            const medicationMap = {};
-            
-            // 统计每种药物的使用天数
-            data.forEach(record => {
-                if (record.medications && record.medications.length > 0) {
-                    record.medications.forEach(med => {
-                        if (med.name) {
-                            if (!medicationMap[med.name]) {
-                                medicationMap[med.name] = Array(data.length).fill(0);
-                            }
-                            const index = data.indexOf(record);
-                            medicationMap[med.name][index] = 1;
-                        }
-                    });
-                }
-            });
-            
-            // 转换为图表数据集
-            const datasets = [];
-            const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
-            let colorIndex = 0;
-            
-            Object.keys(medicationMap).forEach(medName => {
-                datasets.push({
-                    label: medName,
-                    data: medicationMap[medName],
-                    backgroundColor: colors[colorIndex % colors.length],
-                    borderColor: colors[colorIndex % colors.length],
-                    borderWidth: 1
-                });
-                colorIndex++;
-            });
-            
-            return { datasets };
-        }
-        
-        // 编辑记录
-        function editRecord(date) {
-            const allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
-            const record = allData.find(item => item.date === date);
-            
-            if (record) {
-                document.getElementById('date').value = record.date;
-                // 血糖数据
-                document.getElementById('fastingGlucose').value = record.fastingGlucose || '';
-                document.getElementById('breakfast2h').value = record.breakfast2h || '';
-                document.getElementById('breakfast3h').value = record.breakfast3h || '';
-                document.getElementById('lunch2h').value = record.lunch2h || '';
-                document.getElementById('lunch3h').value = record.lunch3h || '';
-                document.getElementById('dinner2h').value = record.dinner2h || '';
-                document.getElementById('dinner3h').value = record.dinner3h || '';
-                // 血压心率数据
-                document.getElementById('morningSystolic').value = record.morningSystolic || '';
-                document.getElementById('morningDiastolic').value = record.morningDiastolic || '';
-                document.getElementById('morningHeartRate').value = record.morningHeartRate || '';
-                document.getElementById('eveningSystolic').value = record.eveningSystolic || '';
-                document.getElementById('eveningDiastolic').value = record.eveningDiastolic || '';
-                document.getElementById('eveningHeartRate').value = record.eveningHeartRate || '';
-                // 血脂数据
-                document.getElementById('ldl').value = record.ldl || '';
-                document.getElementById('hdl').value = record.hdl || '';
-                document.getElementById('triglyceride').value = record.triglyceride || '';
-                document.getElementById('cholesterol').value = record.cholesterol || '';
-                // 药物数据
-                loadMedications(record.medications);
-                document.getElementById('note').value = record.note || '';
-                
-                if (record.mood) {
-                    selectMood(record.mood);
-                }
-                
-                showAlert('已加载该日期的数据，修改后点击保存即可更新', 'success');
-            }
-        }
-        
-        // 加载药物数据到表单
-        function loadMedications(medications) {
-            // 清空现有药物输入框
-            const container = document.getElementById('medicationInputs');
-            container.innerHTML = '';
-            
-            if (medications && medications.length > 0) {
-                medications.forEach((med, index) => {
-                    const newRow = document.createElement('div');
-                    newRow.className = 'med-row';
-                    newRow.innerHTML = `
-                        <input type="text" class="med-input" placeholder="药物名称" data-type="name" value="${med.name || ''}">
-                        <input type="text" class="med-input" placeholder="剂量" data-type="dose" value="${med.dose || ''}">
-                        <input type="text" class="med-input" placeholder="用法(如：早1片)" data-type="usage" value="${med.usage || ''}">
-                        <button class="remove-med-btn" onclick="removeMedicationField(this)">-</button>
-                    `;
-                    container.appendChild(newRow);
-                });
-            } else {
-                // 如果没有药物数据，添加一个空行
-                addMedicationField();
-            }
-        }
-        
-        // 删除记录
-        function deleteRecord(date) {
-            if (confirm(`确定要删除 ${formatDate(date)} 的记录吗？`)) {
-                let allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
-                allData = allData.filter(item => item.date !== date);
-                localStorage.setItem('healthRecords', JSON.stringify(allData));
-                
-                showAlert('记录已删除！', 'success');
-                loadData();
-            }
-        }
-        
         // 导出Excel
         function exportToExcel() {
             const allData = JSON.parse(localStorage.getItem('healthRecords')) || [];
+            const allMedications = JSON.parse(localStorage.getItem('healthMedications')) || [];
             
-            if (allData.length === 0) {
+            if (allData.length === 0 && allMedications.length === 0) {
                 showAlert('没有数据可以导出！', 'warning');
                 return;
             }
             
-            // 准备数据
-            const moodText = {
-                5: '很好 😁',
-                4: '不错 😊',
-                3: '一般 😐',
-                2: '不太好 😔',
-                1: '很差 😢',
-                0: ''
-            };
-            
-            const exportData = allData.map(record => ({
-                '日期': record.date,
-                '空腹血糖': record.fastingGlucose || '',
-                '早餐后2h': record.breakfast2h || '',
-                '早餐后3-4h': record.breakfast3h || '',
-                '午餐后2h': record.lunch2h || '',
-                '午餐后3-4h': record.lunch3h || '',
-                '晚餐后2h': record.dinner2h || '',
-                '晚餐后3-4h': record.dinner3h || '',
-                '早晨收缩压': record.morningSystolic || '',
-                '早晨舒张压': record.morningDiastolic || '',
-                '早晨心率': record.morningHeartRate || '',
-                '晚间收缩压': record.eveningSystolic || '',
-                '晚间舒张压': record.eveningDiastolic || '',
-                '晚间心率': record.eveningHeartRate || '',
-                '低密度脂蛋白(LDL)': record.ldl || '',
-                '高密度脂蛋白(HDL)': record.hdl || '',
-                '甘油三酯(TG)': record.triglyceride || '',
-                '总胆固醇(TC)': record.cholesterol || '',
-                '药物': record.medications ? record.medications.map(m => `${m.name} ${m.dose} ${m.usage}`).join('; ') : '',
-                '心情': moodText[record.mood] || '',
-                '备注': record.note || ''
-            }));
-            
-            const ws = XLSX.utils.json_to_sheet(exportData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, '健康数据');
+            
+            // 导出健康数据
+            if (allData.length > 0) {
+                const moodText = {
+                    5: '很好 😁',
+                    4: '不错 😊',
+                    3: '一般 😐',
+                    2: '不太好 😔',
+                    1: '很差 😢',
+                    0: ''
+                };
+                
+                const healthData = allData.map(record => ({
+                    '日期': record.date,
+                    '时间': record.time,
+                    '空腹血糖': record.fastingGlucose || '',
+                    '早餐后2h': record.breakfast2h || '',
+                    '早餐后3-4h': record.breakfast3h || '',
+                    '午餐后2h': record.lunch2h || '',
+                    '午餐后3-4h': record.lunch3h || '',
+                    '晚餐后2h': record.dinner2h || '',
+                    '晚餐后3-4h': record.dinner3h || '',
+                    '早晨收缩压': record.morningSystolic || '',
+                    '早晨舒张压': record.morningDiastolic || '',
+                    '早晨心率': record.morningHeartRate || '',
+                    '晚间收缩压': record.eveningSystolic || '',
+                    '晚间舒张压': record.eveningDiastolic || '',
+                    '晚间心率': record.eveningHeartRate || '',
+                    '低密度脂蛋白(LDL)': record.ldl || '',
+                    '高密度脂蛋白(HDL)': record.hdl || '',
+                    '甘油三酯(TG)': record.triglyceride || '',
+                    '总胆固醇(TC)': record.cholesterol || '',
+                    '心情': moodText[record.mood] || '',
+                    '备注': record.note || ''
+                }));
+                
+                const ws = XLSX.utils.json_to_sheet(healthData);
+                XLSX.utils.book_append_sheet(wb, ws, '健康数据');
+            }
+            
+            // 导出药物数据
+            if (allMedications.length > 0) {
+                const medData = allMedications.map(record => ({
+                    '开始日期': record.startDate,
+                    '药物名称': record.name,
+                    '剂量': record.dose || '',
+                    '用法': record.usage || '',
+                    '结束日期': record.endDate || '',
+                    '备注': record.note || ''
+                }));
+                
+                const ws2 = XLSX.utils.json_to_sheet(medData);
+                XLSX.utils.book_append_sheet(wb, ws2, '药物记录');
+            }
             
             const fileName = `健康数据_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, fileName);
@@ -1584,7 +1469,7 @@
         function importData() {
             const input = document.createElement('input');
             input.type = 'file';
-            input.accept = '.json,.xlsx,.xls,.csv';
+            input.accept = '.json';
             
             input.onchange = function(e) {
                 const file = e.target.files[0];
@@ -1593,13 +1478,21 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
-                        const content = e.target.result;
-                        let importedData = JSON.parse(content);
+                        const content = JSON.parse(e.target.result);
                         
-                        if (confirm(`找到 ${importedData.length} 条记录，是否导入？`)) {
-                            localStorage.setItem('healthRecords', JSON.stringify(importedData));
-                            showAlert('数据导入成功！', 'success');
-                            loadData();
+                        if (content.healthRecords || content.healthMedications) {
+                            if (confirm('是否导入数据？')) {
+                                if (content.healthRecords) {
+                                    localStorage.setItem('healthRecords', JSON.stringify(content.healthRecords));
+                                }
+                                if (content.healthMedications) {
+                                    localStorage.setItem('healthMedications', JSON.stringify(content.healthMedications));
+                                }
+                                showAlert('数据导入成功！', 'success');
+                                loadData();
+                            }
+                        } else {
+                            showAlert('文件格式不正确！', 'warning');
                         }
                     } catch (error) {
                         showAlert('导入失败，请检查文件格式！', 'warning');
