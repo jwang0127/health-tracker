@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>详细健康数据追踪</title>
+    <title>健康数据追踪</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <style>
@@ -15,34 +15,45 @@
         
         body {
             font-family: 'Microsoft YaHei', sans-serif;
-            background: #f0f2f5;
-            line-height: 1.6;
+            background: #f5f7fa;
             color: #333;
             padding: 20px;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .header {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
             color: white;
-            padding: 30px;
-            border-radius: 15px 15px 0 0;
-            text-align: center;
+            padding: 15px 25px;
+            border-radius: 10px;
             margin-bottom: 20px;
         }
         
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
+        .date-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .subtitle {
-            opacity: 0.9;
-            font-size: 16px;
+        .date-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .date-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #182848;
+        }
+        
+        .date-input {
+            font-size: 20px;
+            padding: 12px 20px;
+            border: 2px solid #4b6cb7;
+            border-radius: 8px;
+            min-width: 200px;
         }
         
         .main-content {
@@ -59,95 +70,113 @@
         .card {
             background: white;
             border-radius: 10px;
-            padding: 25px;
+            padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         h2 {
-            color: #667eea;
+            color: #182848;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #f0f2f5;
+            font-size: 18px;
         }
         
         h3 {
-            color: #495057;
+            color: #4b6cb7;
             margin-bottom: 15px;
+            font-size: 16px;
         }
         
-        .input-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+        .input-section {
             margin-bottom: 20px;
         }
         
-        .form-group {
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .section-title span {
+            font-size: 18px;
+        }
+        
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .bp-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .bp-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .bp-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
+            margin-bottom: 5px;
             color: #495057;
+            font-size: 13px;
         }
         
         input, textarea, select {
             width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e9ecef;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
             border-radius: 6px;
             font-size: 14px;
-            transition: all 0.3s;
         }
         
-        input:focus, textarea:focus, select:focus {
+        input:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .meal-section {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .meal-title {
-            color: #495057;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 2px rgba(75, 108, 183, 0.2);
         }
         
         .mood-selector {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            margin-top: 10px;
         }
         
         .mood-option {
-            padding: 8px 15px;
+            padding: 6px 12px;
             border: 2px solid #e9ecef;
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-size: 13px;
         }
         
         .mood-option:hover {
-            transform: translateY(-2px);
+            border-color: #4b6cb7;
         }
         
         .mood-option.selected {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+            border-color: #4b6cb7;
+            background: rgba(75, 108, 183, 0.1);
         }
         
         .btn-group {
@@ -158,26 +187,21 @@
         }
         
         button {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
             border-radius: 6px;
             font-size: 14px;
-            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         .btn-primary {
-            background: #667eea;
+            background: #4b6cb7;
             color: white;
         }
         
         .btn-primary:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
+            background: #3a5ca9;
         }
         
         .btn-secondary {
@@ -187,7 +211,6 @@
         
         .btn-secondary:hover {
             background: #5a6268;
-            transform: translateY(-2px);
         }
         
         .btn-success {
@@ -197,68 +220,97 @@
         
         .btn-success:hover {
             background: #218838;
-            transform: translateY(-2px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+        
+        .stat-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4b6cb7;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        
+        .sub-stats {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
         }
         
         .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 20px 0;
+            height: 250px;
+            margin: 10px 0;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            font-size: 12px;
         }
         
         th, td {
-            padding: 12px 15px;
-            text-align: left;
+            padding: 8px 10px;
+            text-align: center;
             border-bottom: 1px solid #e9ecef;
         }
         
         th {
             background: #f8f9fa;
             font-weight: 600;
+            color: #495057;
         }
         
         tr:hover {
             background: #f8f9fa;
         }
         
-        .mood-cell {
-            font-size: 20px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .stat-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 24px;
+        .warning {
+            background: #fff3cd !important;
+            color: #856404;
             font-weight: bold;
-            color: #667eea;
         }
         
-        .stat-label {
+        .danger {
+            background: #f8d7da !important;
+            color: #721c24;
+            font-weight: bold;
+        }
+        
+        .mood-cell {
+            font-size: 16px;
+        }
+        
+        .note-cell {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .compact-btn {
+            padding: 4px 8px;
             font-size: 12px;
-            color: #6c757d;
-            margin-top: 5px;
+            margin: 2px;
         }
         
         .alert {
-            padding: 12px 15px;
+            padding: 10px 15px;
             border-radius: 6px;
             margin: 10px 0;
             display: none;
@@ -281,7 +333,11 @@
                 flex-direction: column;
             }
             
-            .input-grid {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .bp-row {
                 grid-template-columns: 1fr;
             }
             
@@ -296,201 +352,212 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📊 详细健康数据追踪系统</h1>
-            <p class="subtitle">记录三餐血糖、血压、心率及心情状态，数据本地安全存储</p>
-        </header>
-        
-        <div class="main-content">
-            <div class="left-panel">
-                <!-- 数据录入卡片 -->
-                <div class="card">
-                    <h2>📝 今日数据录入</h2>
-                    
-                    <div class="form-group">
-                        <label for="date">测量日期</label>
-                        <input type="date" id="date" value="">
+    <div class="header">
+        <h1 style="font-size: 20px; margin-bottom: 5px;">健康数据追踪</h1>
+        <p style="opacity: 0.9; font-size: 13px;">记录血糖、血压、心率及心情状态</p>
+    </div>
+    
+    <div class="date-section">
+        <div class="date-row">
+            <span class="date-label">📅 选择日期：</span>
+            <input type="date" id="date" class="date-input" value="">
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="left-panel">
+            <!-- 数据录入 -->
+            <div class="card">
+                <h2>📝 数据录入</h2>
+                
+                <!-- 血糖数据 -->
+                <div class="input-section">
+                    <div class="section-title">
+                        <span>🩸 血糖 (mmol/L)</span>
                     </div>
                     
-                    <!-- 空腹血糖 -->
-                    <div class="meal-section">
-                        <div class="meal-title">🩸 空腹血糖</div>
-                        <div class="input-grid">
-                            <div class="form-group">
-                                <label for="fastingGlucose">空腹血糖 (mmol/L)</label>
-                                <input type="number" id="fastingGlucose" step="0.1" min="2" max="30" placeholder="如：5.6">
-                            </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>空腹</label>
+                            <input type="number" id="fastingGlucose" step="0.1" min="2" max="30" placeholder="5.6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>早餐后2h</label>
+                            <input type="number" id="breakfast2h" step="0.1" min="2" max="30" placeholder="7.8">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>早餐后3-4h 选填</label>
+                            <input type="number" id="breakfast3h" step="0.1" min="2" max="30" placeholder="6.5">
                         </div>
                     </div>
                     
-                    <!-- 早餐后 -->
-                    <div class="meal-section">
-                        <div class="meal-title">🌅 早餐后</div>
-                        <div class="input-grid">
-                            <div class="form-group">
-                                <label for="breakfast2h">餐后2小时 (mmol/L)</label>
-                                <input type="number" id="breakfast2h" step="0.1" min="2" max="30" placeholder="如：7.8">
-                            </div>
-                            <div class="form-group">
-                                <label for="breakfast3h">餐后3-4小时 (mmol/L) 选填</label>
-                                <input type="number" id="breakfast3h" step="0.1" min="2" max="30" placeholder="如：6.5">
-                            </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>午餐后2h</label>
+                            <input type="number" id="lunch2h" step="0.1" min="2" max="30" placeholder="7.8">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>午餐后3-4h 选填</label>
+                            <input type="number" id="lunch3h" step="0.1" min="2" max="30" placeholder="6.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>晚餐后2h</label>
+                            <input type="number" id="dinner2h" step="0.1" min="2" max="30" placeholder="7.8">
                         </div>
                     </div>
                     
-                    <!-- 午餐后 -->
-                    <div class="meal-section">
-                        <div class="meal-title">🌞 午餐后</div>
-                        <div class="input-grid">
-                            <div class="form-group">
-                                <label for="lunch2h">餐后2小时 (mmol/L)</label>
-                                <input type="number" id="lunch2h" step="0.1" min="2" max="30" placeholder="如：7.8">
-                            </div>
-                            <div class="form-group">
-                                <label for="lunch3h">餐后3-4小时 (mmol/L) 选填</label>
-                                <input type="number" id="lunch3h" step="0.1" min="2" max="30" placeholder="如：6.5">
-                            </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>晚餐后3-4h 选填</label>
+                            <input type="number" id="dinner3h" step="0.1" min="2" max="30" placeholder="6.5">
                         </div>
                     </div>
-                    
-                    <!-- 晚餐后 -->
-                    <div class="meal-section">
-                        <div class="meal-title">🌙 晚餐后</div>
-                        <div class="input-grid">
-                            <div class="form-group">
-                                <label for="dinner2h">餐后2小时 (mmol/L)</label>
-                                <input type="number" id="dinner2h" step="0.1" min="2" max="30" placeholder="如：7.8">
-                            </div>
-                            <div class="form-group">
-                                <label for="dinner3h">餐后3-4小时 (mmol/L) 选填</label>
-                                <input type="number" id="dinner3h" step="0.1" min="2" max="30" placeholder="如：6.5">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 血压和心率 -->
-                    <div class="meal-section">
-                        <div class="meal-title">💓 血压与心率</div>
-                        <div class="input-grid">
-                            <div class="form-group">
-                                <label for="systolic">收缩压 (高压 mmHg)</label>
-                                <input type="number" id="systolic" min="50" max="250" placeholder="如：120">
-                            </div>
-                            <div class="form-group">
-                                <label for="diastolic">舒张压 (低压 mmHg)</label>
-                                <input type="number" id="diastolic" min="30" max="150" placeholder="如：80">
-                            </div>
-                            <div class="form-group">
-                                <label for="heartRate">心率 (次/分钟)</label>
-                                <input type="number" id="heartRate" min="40" max="200" placeholder="如：72">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 心情选择 -->
-                    <div class="meal-section">
-                        <div class="meal-title">😊 今日心情状态</div>
-                        <div class="mood-selector" id="moodSelector">
-                            <div class="mood-option" data-value="5" onclick="selectMood(5)">😁 很好</div>
-                            <div class="mood-option" data-value="4" onclick="selectMood(4)">😊 不错</div>
-                            <div class="mood-option" data-value="3" onclick="selectMood(3)">😐 一般</div>
-                            <div class="mood-option" data-value="2" onclick="selectMood(2)">😔 不太好</div>
-                            <div class="mood-option" data-value="1" onclick="selectMood(1)">😢 很差</div>
-                        </div>
-                        <input type="hidden" id="mood" value="">
-                    </div>
-                    
-                    <!-- 备注 -->
-                    <div class="form-group">
-                        <label for="note">备注 / 身体状况描述</label>
-                        <textarea id="note" placeholder="如：昨晚睡眠良好，今天食欲正常"></textarea>
-                    </div>
-                    
-                    <!-- 按钮 -->
-                    <div class="btn-group">
-                        <button class="btn-primary" onclick="saveRecord()">
-                            <span>💾 保存记录</span>
-                        </button>
-                        <button class="btn-secondary" onclick="clearForm()">
-                            <span>🗑️ 清空表单</span>
-                        </button>
-                        <button class="btn-success" onclick="loadData()">
-                            <span>🔄 刷新数据</span>
-                        </button>
-                    </div>
-                    
-                    <div class="alert" id="alert"></div>
                 </div>
                 
-                <!-- 数据管理 -->
-                <div class="card">
-                    <h2>🛠️ 数据管理</h2>
-                    <div class="btn-group">
-                        <button class="btn-success" onclick="exportToExcel()">
-                            <span>📤 导出Excel</span>
-                        </button>
-                        <button class="btn-secondary" onclick="importData()">
-                            <span>📥 导入数据</span>
-                        </button>
-                        <button class="btn-danger" onclick="clearAllData()" style="background:#dc3545;">
-                            <span>⚠️ 清空所有</span>
-                        </button>
+                <!-- 血压数据 - 早晚分开 -->
+                <div class="input-section">
+                    <div class="section-title">
+                        <span>💓 血压 (mmHg)</span>
                     </div>
+                    
+                    <div class="bp-row">
+                        <!-- 早晨血压 -->
+                        <div class="bp-group">
+                            <div class="bp-label">🌅 早晨血压</div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>收缩压 (高压)</label>
+                                    <input type="number" id="morningSystolic" min="50" max="250" placeholder="120">
+                                </div>
+                                <div class="form-group">
+                                    <label>舒张压 (低压)</label>
+                                    <input type="number" id="morningDiastolic" min="30" max="150" placeholder="80">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 晚间血压 -->
+                        <div class="bp-group">
+                            <div class="bp-label">🌙 晚间血压</div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>收缩压 (高压)</label>
+                                    <input type="number" id="eveningSystolic" min="50" max="250" placeholder="120">
+                                </div>
+                                <div class="form-group">
+                                    <label>舒张压 (低压)</label>
+                                    <input type="number" id="eveningDiastolic" min="30" max="150" placeholder="80">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 心率 -->
+                <div class="input-section">
+                    <div class="section-title">
+                        <span>❤️ 心率 (次/分钟)</span>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <input type="number" id="heartRate" min="40" max="200" placeholder="72">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 心情选择 -->
+                <div class="input-section">
+                    <div class="section-title">
+                        <span>😊 今日心情</span>
+                    </div>
+                    <div class="mood-selector" id="moodSelector">
+                        <div class="mood-option" data-value="5" onclick="selectMood(5)">😁 很好</div>
+                        <div class="mood-option" data-value="4" onclick="selectMood(4)">😊 不错</div>
+                        <div class="mood-option" data-value="3" onclick="selectMood(3)">😐 一般</div>
+                        <div class="mood-option" data-value="2" onclick="selectMood(2)">😔 不太好</div>
+                        <div class="mood-option" data-value="1" onclick="selectMood(1)">😢 很差</div>
+                    </div>
+                    <input type="hidden" id="mood" value="">
+                </div>
+                
+                <!-- 备注 -->
+                <div class="input-section">
+                    <div class="section-title">
+                        <span>📝 备注</span>
+                    </div>
+                    <textarea id="note" rows="2" placeholder="身体状况、用药情况等"></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="saveRecord()">💾 保存记录</button>
+                    <button class="btn-secondary" onclick="clearForm()">🗑️ 清空表单</button>
+                </div>
+                
+                <div class="alert" id="alert"></div>
+            </div>
+            
+            <!-- 数据管理 -->
+            <div class="card">
+                <h2>🛠️ 数据管理</h2>
+                <div class="btn-group">
+                    <button class="btn-success" onclick="exportToExcel()">📤 导出Excel</button>
+                    <button class="btn-secondary" onclick="importData()">📥 导入数据</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <!-- 统计概览 -->
+            <div class="card">
+                <h2>📊 统计概览</h2>
+                <div class="stats-grid" id="stats">
+                    <!-- 统计信息动态生成 -->
                 </div>
             </div>
             
-            <div class="right-panel">
-                <!-- 统计概览 -->
-                <div class="card">
-                    <h2>📈 今日统计</h2>
-                    <div class="stats-grid" id="stats">
-                        <!-- 统计信息动态生成 -->
-                    </div>
+            <!-- 血糖趋势图 -->
+            <div class="card">
+                <h2>📈 血糖趋势</h2>
+                <div class="chart-container">
+                    <canvas id="glucoseChart"></canvas>
                 </div>
-                
-                <!-- 血糖趋势图 -->
-                <div class="card">
-                    <h2>📊 血糖趋势图</h2>
-                    <div class="chart-container">
-                        <canvas id="glucoseChart"></canvas>
-                    </div>
+            </div>
+            
+            <!-- 血压趋势图 -->
+            <div class="card">
+                <h2>📉 血压趋势</h2>
+                <div class="chart-container">
+                    <canvas id="bpChart"></canvas>
                 </div>
-                
-                <!-- 血压趋势图 -->
-                <div class="card">
-                    <h2>📈 血压趋势图</h2>
-                    <div class="chart-container">
-                        <canvas id="bpChart"></canvas>
-                    </div>
-                </div>
-                
-                <!-- 历史记录 -->
-                <div class="card">
-                    <h2>📋 历史记录</h2>
-                    <div style="overflow-x: auto;">
-                        <table id="historyTable">
-                            <thead>
-                                <tr>
-                                    <th>日期</th>
-                                    <th>空腹</th>
-                                    <th>早2h</th>
-                                    <th>早3h</th>
-                                    <th>午2h</th>
-                                    <th>午3h</th>
-                                    <th>晚2h</th>
-                                    <th>晚3h</th>
-                                    <th>血压</th>
-                                    <th>心率</th>
-                                    <th>心情</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="historyBody">
-                                <!-- 数据动态填充 -->
-                            </tbody>
-                        </table>
-                    </div>
+            </div>
+            
+            <!-- 历史记录 -->
+            <div class="card">
+                <h2>📋 历史记录</h2>
+                <div style="overflow-x: auto;">
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>空腹</th>
+                                <th>早2h</th>
+                                <th>午2h</th>
+                                <th>晚2h</th>
+                                <th>晨压</th>
+                                <th>晚压</th>
+                                <th>心率</th>
+                                <th>心情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <!-- 数据动态填充 -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -501,6 +568,23 @@
         let glucoseChart = null;
         let bpChart = null;
         let currentMood = 0;
+        
+        // 血糖阈值
+        const glucoseThresholds = {
+            normal: { min: 3.9, max: 6.1 },       // 空腹正常范围
+            postMeal: { min: 4.4, max: 7.8 },     // 餐后正常范围
+            warning: 9.0,                         // 警告值
+            danger: 11.0                          // 危险值
+        };
+        
+        // 血压阈值
+        const bpThresholds = {
+            systolic: { normal: 120, warning: 140, danger: 160 },
+            diastolic: { normal: 80, warning: 90, danger: 100 }
+        };
+        
+        // 心率阈值
+        const hrThresholds = { min: 60, max: 100 };
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -538,9 +622,12 @@
                 lunch3h: parseFloat(document.getElementById('lunch3h').value) || null,
                 dinner2h: parseFloat(document.getElementById('dinner2h').value) || null,
                 dinner3h: parseFloat(document.getElementById('dinner3h').value) || null,
-                // 血压心率
-                systolic: parseInt(document.getElementById('systolic').value) || null,
-                diastolic: parseInt(document.getElementById('diastolic').value) || null,
+                // 血压数据
+                morningSystolic: parseInt(document.getElementById('morningSystolic').value) || null,
+                morningDiastolic: parseInt(document.getElementById('morningDiastolic').value) || null,
+                eveningSystolic: parseInt(document.getElementById('eveningSystolic').value) || null,
+                eveningDiastolic: parseInt(document.getElementById('eveningDiastolic').value) || null,
+                // 心率
                 heartRate: parseInt(document.getElementById('heartRate').value) || null,
                 // 心情备注
                 mood: currentMood,
@@ -615,22 +702,12 @@
         // 更新统计信息
         function updateStats(data) {
             if (data.length === 0) {
-                document.getElementById('stats').innerHTML = '<p style="text-align: center; color: #6c757d;">暂无数据</p>';
+                document.getElementById('stats').innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1/-1;">暂无数据</p>';
                 return;
             }
             
-            const latest = data[0]; // 最新记录
-            
-            // 计算平均值
-            const fastingValues = data.map(d => d.fastingGlucose).filter(v => v !== null);
-            const breakfast2hValues = data.map(d => d.breakfast2h).filter(v => v !== null);
-            const systolicValues = data.map(d => d.systolic).filter(v => v !== null);
-            const diastolicValues = data.map(d => d.diastolic).filter(v => v !== null);
-            
-            const fastingAvg = fastingValues.length ? (fastingValues.reduce((a, b) => a + b) / fastingValues.length).toFixed(1) : '-';
-            const breakfast2hAvg = breakfast2hValues.length ? (breakfast2hValues.reduce((a, b) => a + b) / breakfast2hValues.length).toFixed(1) : '-';
-            const systolicAvg = systolicValues.length ? Math.round(systolicValues.reduce((a, b) => a + b) / systolicValues.length) : '-';
-            const diastolicAvg = diastolicValues.length ? Math.round(diastolicValues.reduce((a, b) => a + b) / diastolicValues.length) : '-';
+            // 计算统计数据
+            const stats = calculateStats(data);
             
             const statsHTML = `
                 <div class="stat-item">
@@ -638,24 +715,72 @@
                     <div class="stat-label">总记录数</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">${fastingAvg}</div>
-                    <div class="stat-label">平均空腹</div>
+                    <div class="stat-value">${stats.avgGlucose.total}</div>
+                    <div class="stat-label">平均血糖</div>
+                    <div class="sub-stats">空${stats.avgGlucose.fasting} 早${stats.avgGlucose.breakfast}</div>
+                    <div class="sub-stats">午${stats.avgGlucose.lunch} 晚${stats.avgGlucose.dinner}</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">${breakfast2hAvg}</div>
-                    <div class="stat-label">平均早2h</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${systolicAvg}/${diastolicAvg}</div>
+                    <div class="stat-value">${stats.avgBP.systolic}/${stats.avgBP.diastolic}</div>
                     <div class="stat-label">平均血压</div>
+                    <div class="sub-stats">晨${stats.avgBP.morning}</div>
+                    <div class="sub-stats">晚${stats.avgBP.evening}</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">${getMoodEmoji(latest.mood)}</div>
-                    <div class="stat-label">今日心情</div>
+                    <div class="stat-value">${stats.avgHR}</div>
+                    <div class="stat-label">平均心率</div>
                 </div>
             `;
             
             document.getElementById('stats').innerHTML = statsHTML;
+        }
+        
+        // 计算统计数据
+        function calculateStats(data) {
+            // 血糖数据
+            const fastingValues = data.map(d => d.fastingGlucose).filter(v => v !== null);
+            const breakfast2hValues = data.map(d => d.breakfast2h).filter(v => v !== null);
+            const lunch2hValues = data.map(d => d.lunch2h).filter(v => v !== null);
+            const dinner2hValues = data.map(d => d.dinner2h).filter(v => v !== null);
+            
+            // 所有血糖值
+            const allGlucoseValues = [...fastingValues, ...breakfast2hValues, ...lunch2hValues, ...dinner2hValues];
+            
+            // 计算平均值
+            const avgGlucose = {
+                total: allGlucoseValues.length ? (allGlucoseValues.reduce((a, b) => a + b) / allGlucoseValues.length).toFixed(1) : '-',
+                fasting: fastingValues.length ? (fastingValues.reduce((a, b) => a + b) / fastingValues.length).toFixed(1) : '-',
+                breakfast: breakfast2hValues.length ? (breakfast2hValues.reduce((a, b) => a + b) / breakfast2hValues.length).toFixed(1) : '-',
+                lunch: lunch2hValues.length ? (lunch2hValues.reduce((a, b) => a + b) / lunch2hValues.length).toFixed(1) : '-',
+                dinner: dinner2hValues.length ? (dinner2hValues.reduce((a, b) => a + b) / dinner2hValues.length).toFixed(1) : '-'
+            };
+            
+            // 血压数据
+            const morningSystolicValues = data.map(d => d.morningSystolic).filter(v => v !== null);
+            const morningDiastolicValues = data.map(d => d.morningDiastolic).filter(v => v !== null);
+            const eveningSystolicValues = data.map(d => d.eveningSystolic).filter(v => v !== null);
+            const eveningDiastolicValues = data.map(d => d.eveningDiastolic).filter(v => v !== null);
+            
+            const avgBP = {
+                systolic: morningSystolicValues.concat(eveningSystolicValues).length 
+                    ? Math.round(morningSystolicValues.concat(eveningSystolicValues).reduce((a, b) => a + b) / (morningSystolicValues.length + eveningSystolicValues.length))
+                    : '-',
+                diastolic: morningDiastolicValues.concat(eveningDiastolicValues).length
+                    ? Math.round(morningDiastolicValues.concat(eveningDiastolicValues).reduce((a, b) => a + b) / (morningDiastolicValues.length + eveningDiastolicValues.length))
+                    : '-',
+                morning: morningSystolicValues.length && morningDiastolicValues.length
+                    ? `${Math.round(morningSystolicValues.reduce((a, b) => a + b) / morningSystolicValues.length)}/${Math.round(morningDiastolicValues.reduce((a, b) => a + b) / morningDiastolicValues.length)}`
+                    : '-',
+                evening: eveningSystolicValues.length && eveningDiastolicValues.length
+                    ? `${Math.round(eveningSystolicValues.reduce((a, b) => a + b) / eveningSystolicValues.length)}/${Math.round(eveningDiastolicValues.reduce((a, b) => a + b) / eveningDiastolicValues.length)}`
+                    : '-'
+            };
+            
+            // 心率数据
+            const hrValues = data.map(d => d.heartRate).filter(v => v !== null);
+            const avgHR = hrValues.length ? Math.round(hrValues.reduce((a, b) => a + b) / hrValues.length) : '-';
+            
+            return { avgGlucose, avgBP, avgHR };
         }
         
         // 获取心情表情
@@ -671,33 +796,76 @@
             return moodMap[moodValue] || '-';
         }
         
+        // 检查血糖异常
+        function checkGlucoseAbnormal(value, isFasting = false) {
+            if (value === null) return '';
+            if (isFasting) {
+                if (value < glucoseThresholds.normal.min || value > glucoseThresholds.normal.max) {
+                    return value > glucoseThresholds.danger ? 'danger' : 'warning';
+                }
+            } else {
+                if (value < glucoseThresholds.postMeal.min || value > glucoseThresholds.postMeal.max) {
+                    return value > glucoseThresholds.danger ? 'danger' : 'warning';
+                }
+            }
+            return '';
+        }
+        
+        // 检查血压异常
+        function checkBPAbnormal(systolic, diastolic) {
+            if (systolic === null || diastolic === null) return '';
+            if (systolic > bpThresholds.systolic.danger || diastolic > bpThresholds.diastolic.danger) {
+                return 'danger';
+            } else if (systolic > bpThresholds.systolic.warning || diastolic > bpThresholds.diastolic.warning) {
+                return 'warning';
+            }
+            return '';
+        }
+        
+        // 检查心率异常
+        function checkHRAbnormal(value) {
+            if (value === null) return '';
+            if (value < hrThresholds.min || value > hrThresholds.max) {
+                return 'warning';
+            }
+            return '';
+        }
+        
         // 更新历史表格
         function updateHistoryTable(data) {
             const tbody = document.getElementById('historyBody');
             
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录，请添加第一条数据</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px; color: #6c757d;">暂无记录，请添加第一条数据</td></tr>';
                 return;
             }
             
             let html = '';
             data.forEach((record, index) => {
+                // 检查各项数据异常
+                const fastingClass = checkGlucoseAbnormal(record.fastingGlucose, true);
+                const breakfast2hClass = checkGlucoseAbnormal(record.breakfast2h, false);
+                const lunch2hClass = checkGlucoseAbnormal(record.lunch2h, false);
+                const dinner2hClass = checkGlucoseAbnormal(record.dinner2h, false);
+                
+                const morningBPClass = checkBPAbnormal(record.morningSystolic, record.morningDiastolic);
+                const eveningBPClass = checkBPAbnormal(record.eveningSystolic, record.eveningDiastolic);
+                const hrClass = checkHRAbnormal(record.heartRate);
+                
                 html += `
                     <tr>
                         <td>${formatDate(record.date)}</td>
-                        <td>${record.fastingGlucose || '-'}</td>
-                        <td>${record.breakfast2h || '-'}</td>
-                        <td>${record.breakfast3h || '-'}</td>
-                        <td>${record.lunch2h || '-'}</td>
-                        <td>${record.lunch3h || '-'}</td>
-                        <td>${record.dinner2h || '-'}</td>
-                        <td>${record.dinner3h || '-'}</td>
-                        <td>${record.systolic ? record.systolic + '/' + record.diastolic : '-'}</td>
-                        <td>${record.heartRate || '-'}</td>
+                        <td class="${fastingClass}">${record.fastingGlucose || '-'}</td>
+                        <td class="${breakfast2hClass}">${record.breakfast2h || '-'}</td>
+                        <td class="${lunch2hClass}">${record.lunch2h || '-'}</td>
+                        <td class="${dinner2hClass}">${record.dinner2h || '-'}</td>
+                        <td class="${morningBPClass}">${record.morningSystolic ? record.morningSystolic + '/' + record.morningDiastolic : '-'}</td>
+                        <td class="${eveningBPClass}">${record.eveningSystolic ? record.eveningSystolic + '/' + record.eveningDiastolic : '-'}</td>
+                        <td class="${hrClass}">${record.heartRate || '-'}</td>
                         <td class="mood-cell">${getMoodEmoji(record.mood)}</td>
                         <td>
-                            <button onclick="editRecord('${record.date}')" style="padding:5px 10px; background:#6c757d; color:white; border:none; border-radius:4px; cursor:pointer;">编辑</button>
-                            <button onclick="deleteRecord('${record.date}')" style="padding:5px 10px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer; margin-left:5px;">删除</button>
+                            <button class="compact-btn" style="background:#6c757d; color:white;" onclick="editRecord('${record.date}')">编辑</button>
+                            <button class="compact-btn" style="background:#dc3545; color:white;" onclick="deleteRecord('${record.date}')">删除</button>
                         </td>
                     </tr>
                 `;
@@ -730,8 +898,8 @@
                         {
                             label: '空腹血糖',
                             data: sortedData.map(d => d.fastingGlucose),
-                            borderColor: '#667eea',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderColor: '#4b6cb7',
+                            backgroundColor: 'rgba(75, 108, 183, 0.1)',
                             tension: 0.4,
                             fill: true
                         },
@@ -778,18 +946,34 @@
                     labels: dates,
                     datasets: [
                         {
-                            label: '收缩压 (高压)',
-                            data: sortedData.map(d => d.systolic),
+                            label: '早晨收缩压',
+                            data: sortedData.map(d => d.morningSystolic),
                             borderColor: '#ff6b6b',
                             backgroundColor: 'rgba(255, 107, 107, 0.1)',
                             tension: 0.4,
                             fill: true
                         },
                         {
-                            label: '舒张压 (低压)',
-                            data: sortedData.map(d => d.diastolic),
+                            label: '早晨舒张压',
+                            data: sortedData.map(d => d.morningDiastolic),
                             borderColor: '#4ecdc4',
                             backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '晚间收缩压',
+                            data: sortedData.map(d => d.eveningSystolic),
+                            borderColor: '#ff9f43',
+                            backgroundColor: 'rgba(255, 159, 67, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '晚间舒张压',
+                            data: sortedData.map(d => d.eveningDiastolic),
+                            borderColor: '#54a0ff',
+                            backgroundColor: 'rgba(84, 160, 255, 0.1)',
                             tension: 0.4,
                             fill: true
                         }
@@ -825,8 +1009,10 @@
                 document.getElementById('lunch3h').value = record.lunch3h || '';
                 document.getElementById('dinner2h').value = record.dinner2h || '';
                 document.getElementById('dinner3h').value = record.dinner3h || '';
-                document.getElementById('systolic').value = record.systolic || '';
-                document.getElementById('diastolic').value = record.diastolic || '';
+                document.getElementById('morningSystolic').value = record.morningSystolic || '';
+                document.getElementById('morningDiastolic').value = record.morningDiastolic || '';
+                document.getElementById('eveningSystolic').value = record.eveningSystolic || '';
+                document.getElementById('eveningDiastolic').value = record.eveningDiastolic || '';
                 document.getElementById('heartRate').value = record.heartRate || '';
                 document.getElementById('note').value = record.note || '';
                 
@@ -878,8 +1064,10 @@
                 '午餐后3-4h': record.lunch3h || '',
                 '晚餐后2h': record.dinner2h || '',
                 '晚餐后3-4h': record.dinner3h || '',
-                '收缩压': record.systolic || '',
-                '舒张压': record.diastolic || '',
+                '早晨收缩压': record.morningSystolic || '',
+                '早晨舒张压': record.morningDiastolic || '',
+                '晚间收缩压': record.eveningSystolic || '',
+                '晚间舒张压': record.eveningDiastolic || '',
                 '心率': record.heartRate || '',
                 '心情': moodText[record.mood] || '',
                 '备注': record.note || ''
@@ -924,15 +1112,6 @@
             };
             
             input.click();
-        }
-        
-        // 清空所有数据
-        function clearAllData() {
-            if (confirm('⚠️ 警告：确定要清空所有数据吗？此操作不可恢复！')) {
-                localStorage.removeItem('healthRecords');
-                showAlert('所有数据已清空！', 'success');
-                loadData();
-            }
         }
         
         // 显示提示
